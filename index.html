@@ -1,0 +1,32 @@
+<html>
+<head>
+    <style>
+        h1{
+            border: 1px solid red;
+            width: 300px;
+            margin: 50px auto;
+        }
+
+        p{
+            border: 1px solid rebeccapurple;
+            width: 100px;
+            position: absolute;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mod-Rewrite is not enabled</h1>
+    <p>Please enable rewrite module on your web server to continue</p>
+
+    <script src="assets/base/js/jquery-3.3.1.slim.min.js"></script>
+    <script>
+        var mleft = $("h1").offset().left;
+        var mtop = $("h1").offset().top;
+
+        console.log(mleft, mtop);
+        $("p").css("left",mleft+"px");
+        $("p").css("top",mtop+"px");
+    </script>
+</body>
+</html>

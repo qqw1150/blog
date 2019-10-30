@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>Phalcon PHP Framework</title>
+<!--        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">-->
+        <link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->url->get('img/favicon.ico')?>"/>
+        <?php $this->assets->outputCss('base'); $this->assets->outputCss(); ?>
+
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="header">
+                    <div class="logo">
+<!--                        <img class="left" src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1022109268,3759531978&fm=26&gp=0.jpg"/>-->
+                        <div class="right">ZyBlog</div>
+                    </div>
+                    <?php if($user=$this->userService->getLoginedUser()){?>
+                    <div class="user">
+                        <div class="pic"><img class="img-circle" src="<?php echo $user['photo']?>"/></div>
+                        <div class="name"><?php echo $user['account']?></div>
+                        <div class="opt glyphicon glyphicon-triangle-bottom" data-container="body" data-toggle="popover"  data-placement="bottom" data-html="<h1>111</h1>"></div>
+                    </div>
+                    <div class="popover fade bottom in" role="tooltip" id="userPopover">
+                        <div class="arrow" style="left: 50%;"></div>
+                        <div class="popover-content">
+                            <a href="/user/writeHtml" class="item">开始创作</a>
+                            <a href="/user/info" class="item">用户资料</a>
+                            <a href="/user/logout" class="item logout">退出</a>
+                        </div>
+                    </div>
+                    <?php }else{?>
+                        <ul class="opts nav nav-pills">
+                            <li role="presentation"><a href="/user/loginHtml">登录</a></li>
+                            <li role="presentation"><a href="/user/registerHtml">注册</a></li>
+                        </ul>
+                    <?php }?>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="container">
+            <?php echo $this->getContent(); ?>
+        </div>
+
+        <?php $this->assets->outputJs('base'); $this->assets->outputJs(); ?>
+    </body>
+</html>

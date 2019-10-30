@@ -1,0 +1,18 @@
+<div class="login-box">
+    <div class="login-title"><h1>用户登录</h1></div>
+    <?php echo $this->flash->output();?>
+    <div class="login-body">
+        <form action="/user/login" method="post">
+        <div class="login-item"><input class="input-text" type="text" name="account" placeholder="手机号或邮箱"/></div>
+        <div class="login-item"><input class="input-text" type="password" name="password" placeholder="密码"></div>
+        <div class="login-item login-item2">
+            <label>
+                <input class="input-checkbox" type="checkbox" value="" name="remember">
+                <span>保持登录</span>
+            </label>
+            <a href="#" class="forget">忘记密码？</a>
+        </div>
+        <div class="login-item"><button class="submit" type="submit">立即登录</button></div>
+        </form>
+    </div>
+</div>
