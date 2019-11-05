@@ -17,6 +17,12 @@ return new \Phalcon\Config([
         'dbname'      => $secret['database']['dbname'],
         'charset'     => $secret['database']['charset'],
     ],
+    'redis'=>[
+        'host'=>$secret['redis']['host'],
+        'port'=>$secret['redis']['port'],
+        'password'=>$secret['redis']['password'],
+        'timeout'=>$secret['redis']['timeout'],
+    ],
     'application' => [
         'appDir'         => APP_PATH . '/',
         'controllersDir' => APP_PATH . '/controllers/',

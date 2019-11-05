@@ -2,8 +2,15 @@
 
 namespace app\controllers;
 
+use app\services\UserService;
 use Phalcon\Mvc\Controller;
 
+/**
+ * Class ControllerBase
+ * @property UserService $userService
+ * @property \Redis $redis
+ * @package app\controllers
+ */
 class ControllerBase extends Controller
 {
     /**

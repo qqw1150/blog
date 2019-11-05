@@ -10,10 +10,7 @@ namespace app\services;
 
 
 use app\models\Tag;
-use app\models\User;
 use app\models\UserTag;
-use Phalcon\Db\Adapter\Pdo\Mysql;
-use Phalcon\Logger\Adapter\File;
 
 class TagService extends BaseService
 {

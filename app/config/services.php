@@ -41,33 +41,33 @@ $di->setShared(
         $dispatcher->setDefaultNamespace("app\controllers");
         $dispatcher->setDefaultController('index');
 
-        $eventManager=new \Phalcon\Events\Manager();
-        $eventManager->attach('dispatch:beforeDispatchLoop',function (\Phalcon\Events\Event $event, \Phalcon\Mvc\Dispatcher $dispatcher){
+        $eventManager = new \Phalcon\Events\Manager();
+        $eventManager->attach('dispatch:beforeDispatchLoop', function (\Phalcon\Events\Event $event, \Phalcon\Mvc\Dispatcher $dispatcher) {
             $controllerName = $dispatcher->getControllerClass();
             $actionName = $dispatcher->getActionName();
 
-            try{
+            try {
                 /**
                  * @var \Phalcon\Http\Request $request
                  */
-                $reflection=new ReflectionClass($controllerName);
+                $reflection = new ReflectionClass($controllerName);
                 $request = $reflection->newInstance()->request;
-                if($actionName==='login'){
-                    $loginForm=new LoginForm();
-                    $loginForm->setAccount($request->get('account','trim',''));
-                    $loginForm->setPassword($request->get('password','trim',''));
-                    $rememberMe=$request->get('rememberMe','int!',0);
+                if ($actionName === 'login') {
+                    $loginForm = new LoginForm();
+                    $loginForm->setAccount($request->get('account', 'trim', ''));
+                    $loginForm->setPassword($request->get('password', 'trim', ''));
+                    $rememberMe = $request->get('rememberMe', 'int!', 0);
                     $loginForm->setRememberMe($rememberMe);
                     $dispatcher->setParams([$loginForm]);
-                }else if($actionName==='register'){
+                } else if ($actionName === 'register') {
                     $registerForm = new RegisterForm();
                     $registerForm->setAccount($request->get('account', 'trim', ''));
-                    $registerForm->setPassword($request->get('password','trim',''));
-                    $registerForm->setCaptcha($request->get('captcha','trim',''));
+                    $registerForm->setPassword($request->get('password', 'trim', ''));
+                    $registerForm->setCaptcha($request->get('captcha', 'trim', ''));
                     $dispatcher->setParams([$registerForm]);
                 }
 
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 //控制器不存在什么都不做
             }
         });
@@ -116,11 +116,11 @@ $di->setShared('db', function () {
 
     $class = 'Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
     $params = [
-        'host'     => $config->database->host,
+        'host' => $config->database->host,
         'username' => $config->database->username,
         'password' => $config->database->password,
-        'dbname'   => $config->database->dbname,
-        'charset'  => $config->database->charset
+        'dbname' => $config->database->dbname,
+        'charset' => $config->database->charset
     ];
 
     if ($config->database->adapter == 'Postgresql') {
@@ -145,9 +145,9 @@ $di->setShared('modelsMetadata', function () {
  */
 $di->set('flash', function () {
     return new Flash([
-        'error'   => 'alert alert-danger',
+        'error' => 'alert alert-danger',
         'success' => 'alert alert-success',
-        'notice'  => 'alert alert-info',
+        'notice' => 'alert alert-info',
         'warning' => 'alert alert-warning'
     ]);
 });
@@ -156,10 +156,10 @@ $di->set('flash', function () {
  * Start the session the first time some component request the session service
  */
 $di->setShared('session', function () {
-    ini_set("session.save_path","/workspace/sessions/");
+    ini_set("session.save_path", "/workspace/sessions/");
     $options = [
-        'lifetime'   => 0,
-        'adapter'    => 'files',
+        'lifetime' => 0,
+        'adapter' => 'files',
     ];
     $session = Factory::load($options);
     $session->start();
@@ -171,7 +171,7 @@ $di->setShared('session', function () {
  * 文件日志器
  */
 $di->set('logger', function () {
-    $logger=new \Phalcon\Logger\Adapter\File(APP_PATH.'/logs/'.date('Y-m-d').'.log');
+    $logger = new \Phalcon\Logger\Adapter\File(APP_PATH . '/logs/' . date('Y-m-d') . '.log');
     return $logger;
 });
 
@@ -201,3 +201,15 @@ $di->set(
         return $cookies;
     }
 );
+
+$di->set('redis', function () use ($di) {
+    /**
+     * @var \Phalcon\Config $config
+     */
+    $config = $di->get('config');
+    $conf = $config->redis;
+    $redis = new \Redis();
+    $redis->connect($conf['host'],$conf['port'],$conf['timeout']);
+    $redis->auth($conf['password']);
+    return $redis;
+});
