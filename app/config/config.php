@@ -6,14 +6,16 @@
 defined('BASE_PATH') || define('BASE_PATH', getenv('BASE_PATH') ?: realpath(dirname(__FILE__) . '/../..'));
 defined('APP_PATH') || define('APP_PATH', BASE_PATH . '/app');
 
+$secret = include_once __DIR__.'/.my.php';
+
 return new \Phalcon\Config([
     'database' => [
         'adapter'     => 'Mysql',
-        'host'        => '192.168.56.102',
-        'username'    => 'zhangyong',
-        'password'    => 'ROOTroot123!@#',
-        'dbname'      => 'blog',
-        'charset'     => 'utf8',
+        'host'        => $secret['database']['host'],
+        'username'    => $secret['database']['username'],
+        'password'    => $secret['database']['password'],
+        'dbname'      => $secret['database']['dbname'],
+        'charset'     => $secret['database']['charset'],
     ],
     'application' => [
         'appDir'         => APP_PATH . '/',

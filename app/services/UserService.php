@@ -16,8 +16,11 @@ use app\models\User;
 use app\models\UserTag;
 use Phalcon\Config;
 use Phalcon\Crypt;
+use Phalcon\Db;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Db\Column;
+use Phalcon\Db\Profiler;
+use Phalcon\Http\Response\Cookies;
 use Phalcon\Logger\Adapter\File;
 use Phalcon\Mvc\Model\Resultset\Simple;
 use Phalcon\Session\Adapter\Files;
@@ -64,6 +67,7 @@ class UserService extends BaseService
     /**
      * 获取已登录用户
      * @return bool|\Phalcon\Mvc\Model\ResultsetInterface
+     * @throws Crypt\Mismatch
      */
     public function getLoginedUser()
     {
@@ -74,11 +78,10 @@ class UserService extends BaseService
         $session = $this->di->get('session');
         $user = $session->get('user');
         if (empty($user)) {
-            return false;
-        }
-
-        if (empty($user['photo'])) {
-            $user['photo'] = STATIC_URL . '/image/default_user.jpg';
+            $user = $this->checkIdentifier();
+            if($user===false){
+                return false;
+            }
         }
 
         return $user;
@@ -180,18 +183,20 @@ class UserService extends BaseService
     {
         /**
          * @var Config $config
-         * @var Crypt $crypt
          * @var User $user ;
          * @var File $logger
+         * @var Cookies $cookies
+         * @var Crypt $crypt
          */
+        $cookies = $this->di->get('cookies');
         $user = $userRs->getFirst();
         $account = !empty($user->getPhone()) ? $user->getPhone() : $user->getEmail();
         $identifier = $this->getIdentifier($account);
         $token = $this->getToken();
-        $expire = 7200;
+        $expire = time()+7200;
         $user->setIdentifier($identifier);
         $user->setToken($token);
-        $user->setTimeout(time() + $expire);
+        $user->setTimeout($expire);
 
         if ($user->update() === false) {
             $logger = $this->di->get('logger');
@@ -202,9 +207,11 @@ class UserService extends BaseService
             return false;
         }
 
-        $crypt = $this->di->get('crypt');
+        $crypt=$this->di->get('crypt');
+        $msg=$crypt->encrypt(json_encode(['identifier' => $identifier, 'token' => $token]),$crypt->getKey());
         $config = $this->di->get('config');
-        setcookie('auth', $crypt->encrypt(json_encode(['identifier' => $identifier, 'token' => $token])), $crypt->getKey(), $expire, $config->application->domain2);
+        $cookies->set('auth',$msg,$expire,'/',false,$config->application->domain2)->send();
+
 
         return true;
     }
@@ -218,11 +225,13 @@ class UserService extends BaseService
     {
         /**
          * @var Crypt $crypt
+         * @var Cookies $cookies
          */
         $crypt = $this->di->get('crypt');
+        $cookies=$this->di->get('cookies');
 
-        if (isset($_COOKIE['auth'])) {
-            $auth = $_COOKIE['auth'];
+        if ($cookies->has('auth')) {
+            $auth = $cookies->get('auth')->getValue();
             $auth = $crypt->decrypt($auth, $crypt->getKey());
             $auth = json_decode($auth, true);
             if ($auth === false) {
@@ -231,13 +240,13 @@ class UserService extends BaseService
 
             $identifier = $auth['identifier'];
             $token = $auth['token'];
-
             /**
              * @var User $user
              * @var Simple $userRs
              */
             $userRs = User::query()->where('identifier=?0', [$identifier])->execute();
-            if ($userRs->count() > 0) {
+
+            if ($userRs->count() ===0) {
                 //不存在token身份
                 return false;
             }
@@ -252,9 +261,7 @@ class UserService extends BaseService
                 return false;
             }
 
-            $this->saveUserSession($userRs);
-
-            return true;
+            return $this->saveUserSession($userRs);
         }
 
         return false;
@@ -272,13 +279,24 @@ class UserService extends BaseService
          */
         $session = $this->di->get('session');
         $user = $userRs->toArray();
+        $user=$user[0];
         $account = !empty($user['phone']) ? $user['phone'] : $user['email'];
         $accountType = self::getAccountType($account);
 
         $user['account'] = $account;
         $user['accountType'] = $accountType;
-        $user['tags'] = $this->getUserTags();
+        $user['tags'] = $this->getUserTags($user['id']);
+
+        if(empty($user['photo'])){
+            $user['photo']=STATIC_URL.'/image/default_user.jpg';
+        }
+
+        unset($user['token']);
+        unset($user['password']);
+
         $session->set('user', $user);
+
+        return $user;
     }
 
 
@@ -295,21 +313,32 @@ class UserService extends BaseService
 
     /**
      * 获取用户tag
+     * @param int $userId
      * @return array|bool
      */
-    public function getUserTags(){
-        $user=$this->getLoginedUser();
-        if($user===false){
-            return false;
-        }
-
+    public function getUserTags($userId){
         /**
          * @var Mysql $db
          */
         $db=$this->di->get('db');
-        $sql="select ut.user_id,ut.tag_id,t.name from user_tag ut right join tag t on t.id=ut.tag_id";
-        $tags=$db->fetchAll($sql);
+        $sql="select ut.user_id,ut.tag_id,t.name,t.icon from user_tag ut left join tag t on ut.tag_id=t.id where ut.user_id=?";
+        $tags=$db->fetchAll($sql,Db::FETCH_ASSOC,[$userId],[Column::BIND_PARAM_INT]);
         return $tags;
+    }
+
+    public function logout(){
+        /**
+         * @var Files $session
+         * @var Cookies $cookies
+         */
+        $session = $this->di->get('session');
+        $cookies = $this->di->get('cookies');
+        $session->remove('user');
+        $session->destroy();
+
+        $config = $this->di->get('config');
+        $cookies->set('auth','','-1','/',false,$config->application->domain2)->send();
+        $cookies->get('auth')->delete();
     }
 
 }

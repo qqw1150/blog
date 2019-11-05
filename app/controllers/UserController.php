@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\libraries\Captcha;
 use app\models\domains\LoginForm;
 use app\models\domains\RegisterForm;
+use app\models\User;
 use app\services\UserService;
 use app\validations\LoginValidation;
 use app\validations\RegisterValidation;
@@ -37,14 +38,12 @@ class UserController extends ControllerBase
      */
     public function loginHtmlAction()
     {
-
     }
 
     /**
      * 进入注册页面
      */
     public function registerHtmlAction(){
-
     }
 
     /**
@@ -122,7 +121,7 @@ class UserController extends ControllerBase
     }
 
     public function logoutAction(){
-        $this->session->destroy();
+        $this->di->get('userService')->logout();
         return $this->response->redirect('index/index');
     }
 }

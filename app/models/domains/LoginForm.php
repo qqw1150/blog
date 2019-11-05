@@ -38,6 +38,10 @@ class LoginForm extends Base
      */
     public function setRememberMe($rememberMe)
     {
+        if(is_int($rememberMe)){
+            $this->rememberMe = ($rememberMe===1 ? true : false);
+        }
+
         $this->rememberMe = $rememberMe;
     }
 

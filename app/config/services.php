@@ -4,6 +4,7 @@ use app\models\domains\RegisterForm;
 use app\models\domains\LoginForm;
 use Phalcon\Crypt;
 use Phalcon\Flash\Direct as Flash;
+use Phalcon\Http\Response\Cookies;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Mvc\Url as UrlResolver;
 use Phalcon\Mvc\View;
@@ -55,6 +56,8 @@ $di->setShared(
                     $loginForm=new LoginForm();
                     $loginForm->setAccount($request->get('account','trim',''));
                     $loginForm->setPassword($request->get('password','trim',''));
+                    $rememberMe=$request->get('rememberMe','int!',0);
+                    $loginForm->setRememberMe($rememberMe);
                     $dispatcher->setParams([$loginForm]);
                 }else if($actionName==='register'){
                     $registerForm = new RegisterForm();
@@ -177,7 +180,7 @@ $di->set(
     function () {
         $crypt = new Crypt();
         $crypt->setCipher('aes-256-ctr');
-        $crypt->useSigning(true);
+//        $crypt->useSigning(true);
 
         // Set a global encryption key
         $crypt->setKey(
@@ -187,4 +190,14 @@ $di->set(
         return $crypt;
     },
     true
+);
+
+
+$di->set(
+    'cookies',
+    function () {
+        $cookies = new Cookies();
+        $cookies->useEncryption(true);
+        return $cookies;
+    }
 );

@@ -28,6 +28,11 @@ class Tag extends \Phalcon\Mvc\Model
     protected $name;
 
     /**
+     * @var integer
+     */
+    protected $icon;
+
+    /**
      * @return int
      */
     public function getId()
@@ -58,6 +63,24 @@ class Tag extends \Phalcon\Mvc\Model
     {
         $this->name = $name;
     }
+
+    /**
+     * @return int
+     */
+    public function getIcon(): int
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param int $icon
+     */
+    public function setIcon(int $icon): void
+    {
+        $this->icon = $icon;
+    }
+
+
 
     /**
      * Initialize method for model.

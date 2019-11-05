@@ -41,51 +41,12 @@ class ArticleService extends BaseService
             return false;
         }
         $article->setUserId($user['id']);
-
-        /**
-         * @var File $logger
-         */
-        $logger = $this->di->get('logger');
         if ($article->save() === false) {
-            $messages = $article->getMessages();
-            foreach ($messages as $message) {
-                $logger->error($message->getMessage() . '-' . $message->getType() . '-' . $message->getField());
-            }
+            $this->recordErr($article);
             return false;
         }
 
         return true;
     }
-
-
-    public function createTags(array $tags): bool
-    {
-        /**
-         * @var UserService $userService
-         */
-        $userService = $this->di->get('userService');
-        $userTags = $userService->getUserTags();
-        if ($userTags === false) {
-            return false;
-        }
-
-        $userTagNames=[];
-        foreach ($userTags as $userTag){
-            $userTagNames[]=$userTag['name'];
-        }
-
-        $mTags=[];
-        foreach ($tags as $key=>$tagName) {
-            if (!in_array($tagName, $userTagNames)) {
-                $tag=new Tag();
-                $tag->setName($tagName);
-            }
-        }
-
-
-
-        return true;
-    }
-
 
 }
