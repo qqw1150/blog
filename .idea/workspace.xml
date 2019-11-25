@@ -2,123 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8127a82d-e67a-4804-acdc-89063e8975ee" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/layui.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/layui.mobile.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/code.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/laydate/default/laydate.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/layer/default/icon-ext.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/layer/default/icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/layer/default/layer.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/layer/default/loading-0.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/layer/default/loading-1.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/css/modules/layer/default/loading-2.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/font/iconfont.eot" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/font/iconfont.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/font/iconfont.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/font/iconfont.woff" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/font/iconfont.woff2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/0.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/1.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/10.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/11.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/12.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/13.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/14.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/15.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/16.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/17.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/18.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/19.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/2.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/20.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/21.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/22.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/23.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/24.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/25.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/26.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/27.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/28.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/29.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/3.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/30.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/31.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/32.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/33.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/34.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/35.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/36.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/37.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/38.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/39.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/4.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/40.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/41.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/42.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/43.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/44.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/45.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/46.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/47.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/48.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/49.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/5.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/50.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/51.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/52.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/53.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/54.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/55.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/56.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/57.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/58.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/59.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/6.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/60.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/61.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/62.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/63.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/64.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/65.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/66.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/67.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/68.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/69.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/7.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/70.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/71.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/8.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/images/face/9.gif" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/carousel.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/code.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/colorpicker.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/element.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/flow.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/form.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/jquery.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/laydate.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/layedit.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/layer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/laypage.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/laytpl.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/mobile.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/rate.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/slider.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/table.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/transfer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/tree.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/upload.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/lay/modules/util.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/layui.all.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/plugs/layui/layui.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/blog.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/IndexController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/IndexController.php" afterDir="false" />
     </list>
     <list id="2b358f93-b1bb-4d37-8755-42fe70f01a47" name="ignore" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/16348ee0-2d48-4458-b1b4-d651882cf46c.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.php" beforeDir="false" afterPath="$PROJECT_DIR$/test.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -181,6 +77,7 @@
           <entry key="JavaScript" value="10" />
           <entry key="Less" value="13" />
           <entry key="PHP" value="199" />
+          <entry key="PLAIN_TEXT" value="1" />
           <entry key="Scratch" value="4" />
           <entry key="htaccess" value="1" />
         </counts>
@@ -206,7 +103,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/config/services.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="607">
@@ -218,20 +115,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/config/.my.php">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+            <state>
+              <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/config/config.php">
+        <entry file="file://$PROJECT_DIR$/app/config/.my.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="19" column="10" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="10" />
+            <state relative-caret-position="315">
+              <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -514,7 +411,7 @@
       <workItem from="1572945900249" duration="4916000" />
       <workItem from="1574306125740" duration="21000" />
       <workItem from="1574306242399" duration="825000" />
-      <workItem from="1574653657453" duration="738000" />
+      <workItem from="1574653657453" duration="2546000" />
     </task>
     <task id="LOCAL-00001" summary="完成记住密码功能">
       <created>1572948838993</created>
@@ -534,11 +431,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="138786000" />
+    <option name="totallyTimeSpent" value="140594000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22121535" />
       <window_info id="Favorites" order="1" side_tool="true" />
@@ -576,13 +472,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="添加redis服务配置" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/validations/RegisterValidation.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="17" column="6" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$APPLICATION_PLUGINS_DIR$/phpstorm-library-plugin.jar!/Phalcon/Phalcon/session/Factory.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="418">
@@ -905,6 +794,13 @@
           <folding>
             <element signature="e#7#43#0#PHP" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
         </state>
       </provider>
     </entry>
