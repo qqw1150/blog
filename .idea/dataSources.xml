@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="虚拟机" uuid="16348ee0-2d48-4458-b1b4-d651882cf46c">
+    <data-source source="LOCAL" name="我的服务器@blog" uuid="7b0ede2f-2120-4068-9e6a-5d9a19c1fb85">
       <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://192.168.56.102:3306/blog</jdbc-url>
+      <jdbc-url>jdbc:mysql://106.54.60.70:3306/blog</jdbc-url>
       <driver-properties>
         <property name="autoReconnect" value="true" />
         <property name="zeroDateTimeBehavior" value="convertToNull" />
