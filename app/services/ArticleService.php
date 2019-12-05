@@ -8,12 +8,10 @@
 
 namespace app\services;
 
-
+use app\exceptions\NotLoginException;
 use app\models\Article;
 use app\models\domains\ArticleForm;
-use app\models\Tag;
 use Phalcon\Db\Adapter\Pdo\Mysql;
-use Phalcon\Logger\Adapter\File;
 
 class ArticleService extends BaseService
 {
@@ -28,7 +26,7 @@ class ArticleService extends BaseService
         /**
          * @var Mysql $db
          */
-        $db=$this->di->get('db');
+        $db = $this->di->get('db');
         $db->begin();
 
         if ($articleForm->getId()) {
@@ -46,8 +44,9 @@ class ArticleService extends BaseService
         $userService = $this->di->get('userService');
         $user = $userService->getLoginedUser();
         if ($user === false) {
-            return false;
+            throw new NotLoginException();
         }
+
         $article->setUserId($user['id']);
         if ($article->save() === false) {
             $this->recordErr($article);
@@ -55,25 +54,23 @@ class ArticleService extends BaseService
             return false;
         }
 
+        $s = microtime(true);
         /**
          * 添加标签
          * @var TagService $tagService
          */
         $tagService = $this->di->get('tagService');
-        $tagNames=$articleForm->getTags();
-        foreach ($tagNames as $tagName){
-            $b=$tagService->addUserTag($tagName,$user['id']);
-            if($b===false){
-                $db->rollback();
-            }
-
-            $b=$tagService->addArticleTag($tagName,$article->getId());
-            if($b===false){
-                $db->rollback();
-            }
+        $tagNames = $articleForm->getTags();
+        $b = $tagService->saveArticleTag($tagNames, $article->getId());
+        if ($b === false) {
+            $db->rollback();
+            return false;
         }
+        $e = microtime(true);
 
         $db->commit();
+        var_dump($e - $s);
+        exit;
 
         return true;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: 14521
@@ -9,6 +10,7 @@
 namespace app\services;
 
 
+use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Db\Profiler;
 use Phalcon\Di;
 use Phalcon\Di\InjectionAwareInterface;
@@ -19,10 +21,12 @@ use Phalcon\Mvc\Model;
  * Class BaseService
  * @property Di $di
  * @package app\services
+ * @property Mysql $db
  */
 class BaseService implements InjectionAwareInterface
 {
     protected $di;
+    protected $db;
 
 
     /**
@@ -32,7 +36,8 @@ class BaseService implements InjectionAwareInterface
      */
     public function setDI(\Phalcon\DiInterface $dependencyInjector)
     {
-       $this->di=$dependencyInjector;
+        $this->di = $dependencyInjector;
+        $this->db = $this->di->get('db');
     }
 
     /**
@@ -48,7 +53,8 @@ class BaseService implements InjectionAwareInterface
     /**
      * @param Model $model
      */
-    public function recordErr($model){
+    public function recordErr($model)
+    {
         /**
          * @var File $logger
          */
@@ -59,11 +65,12 @@ class BaseService implements InjectionAwareInterface
         }
     }
 
-//    public static function printSql(){
-//        $profiler=new Profiler();
-//        $profiles=$profiler->getProfiles();
-//        foreach ($profiles as $profile){
-//            var_dump($profile->getSqlStatement());
-//        }
-//    }
+    public static function printSql()
+    {
+        $profiler = new Profiler();
+        $profiles = $profiler->getProfiles();
+        foreach ($profiles as $profile) {
+            var_dump($profile->getSqlStatement());
+        }
+    }
 }

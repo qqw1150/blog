@@ -46,7 +46,7 @@ class Article extends \Phalcon\Mvc\Model
      */
     public function getId()
     {
-        return $this->id;
+        return intval($this->id);
     }
 
     /**

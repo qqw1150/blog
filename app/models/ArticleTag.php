@@ -91,6 +91,10 @@ class ArticleTag extends \Phalcon\Mvc\Model
         return 'article_tag';
     }
 
+    public static function getTable(){
+        return 'article_tag';
+    }
+
     /**
      * Allows to query a set of records that match the specified conditions
      *

@@ -22,6 +22,7 @@ use Phalcon\Db\Column;
 use Phalcon\Db\Profiler;
 use Phalcon\Http\Response\Cookies;
 use Phalcon\Logger\Adapter\File;
+use Phalcon\Mvc\Model\Manager;
 use Phalcon\Mvc\Model\Resultset\Simple;
 use Phalcon\Session\Adapter\Files;
 use Phalcon\Validation;
@@ -79,7 +80,7 @@ class UserService extends BaseService
         $user = $session->get('user');
         if (empty($user)) {
             $user = $this->checkIdentifier();
-            if($user===false){
+            if ($user === false) {
                 return false;
             }
         }
@@ -193,7 +194,7 @@ class UserService extends BaseService
         $account = !empty($user->getPhone()) ? $user->getPhone() : $user->getEmail();
         $identifier = $this->getIdentifier($account);
         $token = $this->getToken();
-        $expire = time()+7200;
+        $expire = time() + 7200;
         $user->setIdentifier($identifier);
         $user->setToken($token);
         $user->setTimeout($expire);
@@ -207,10 +208,10 @@ class UserService extends BaseService
             return false;
         }
 
-        $crypt=$this->di->get('crypt');
-        $msg=$crypt->encrypt(json_encode(['identifier' => $identifier, 'token' => $token]),$crypt->getKey());
+        $crypt = $this->di->get('crypt');
+        $msg = $crypt->encrypt(json_encode(['identifier' => $identifier, 'token' => $token]), $crypt->getKey());
         $config = $this->di->get('config');
-        $cookies->set('auth',$msg,$expire,'/',false,$config->application->domain2)->send();
+        $cookies->set('auth', $msg, $expire, '/', false, $config->application->domain2)->send();
 
 
         return true;
@@ -228,7 +229,7 @@ class UserService extends BaseService
          * @var Cookies $cookies
          */
         $crypt = $this->di->get('crypt');
-        $cookies=$this->di->get('cookies');
+        $cookies = $this->di->get('cookies');
 
         if ($cookies->has('auth')) {
             $auth = $cookies->get('auth')->getValue();
@@ -246,7 +247,7 @@ class UserService extends BaseService
              */
             $userRs = User::query()->where('identifier=?0', [$identifier])->execute();
 
-            if ($userRs->count() ===0) {
+            if ($userRs->count() === 0) {
                 //不存在token身份
                 return false;
             }
@@ -279,7 +280,7 @@ class UserService extends BaseService
          */
         $session = $this->di->get('session');
         $user = $userRs->toArray();
-        $user=$user[0];
+        $user = $user[0];
         $account = !empty($user['phone']) ? $user['phone'] : $user['email'];
         $accountType = self::getAccountType($account);
 
@@ -287,8 +288,8 @@ class UserService extends BaseService
         $user['accountType'] = $accountType;
         $user['tags'] = $this->getUserTags($user['id']);
 
-        if(empty($user['photo'])){
-            $user['photo']=STATIC_URL.'/image/default_user.jpg';
+        if (empty($user['photo'])) {
+            $user['photo'] = STATIC_URL . '/image/default_user.jpg';
         }
 
         unset($user['token']);
@@ -311,22 +312,8 @@ class UserService extends BaseService
         return $token = md5(uniqid(rand(), TRUE));
     }
 
-    /**
-     * 获取用户tag
-     * @param int $userId
-     * @return array|bool
-     */
-    public function getUserTags($userId){
-        /**
-         * @var Mysql $db
-         */
-        $db=$this->di->get('db');
-        $sql="select ut.user_id,ut.tag_id,t.name,t.icon from user_tag ut left join tag t on ut.tag_id=t.id where ut.user_id=?";
-        $tags=$db->fetchAll($sql,Db::FETCH_ASSOC,[$userId],[Column::BIND_PARAM_INT]);
-        return $tags;
-    }
-
-    public function logout(){
+    public function logout()
+    {
         /**
          * @var Files $session
          * @var Cookies $cookies
@@ -337,7 +324,7 @@ class UserService extends BaseService
         $session->destroy();
 
         $config = $this->di->get('config');
-        $cookies->set('auth','','-1','/',false,$config->application->domain2)->send();
+        $cookies->set('auth', '', '-1', '/', false, $config->application->domain2)->send();
         $cookies->get('auth')->delete();
     }
 
