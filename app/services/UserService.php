@@ -9,20 +9,13 @@
 namespace app\services;
 
 
-use app\models\Article;
 use app\models\domains\LoginForm;
 use app\models\domains\RegisterForm;
 use app\models\User;
-use app\models\UserTag;
 use Phalcon\Config;
 use Phalcon\Crypt;
-use Phalcon\Db;
-use Phalcon\Db\Adapter\Pdo\Mysql;
-use Phalcon\Db\Column;
-use Phalcon\Db\Profiler;
 use Phalcon\Http\Response\Cookies;
 use Phalcon\Logger\Adapter\File;
-use Phalcon\Mvc\Model\Manager;
 use Phalcon\Mvc\Model\Resultset\Simple;
 use Phalcon\Session\Adapter\Files;
 use Phalcon\Validation;
@@ -277,6 +270,7 @@ class UserService extends BaseService
     {
         /**
          * @var Files $session
+         * @var TagService $tagService
          */
         $session = $this->di->get('session');
         $user = $userRs->toArray();
@@ -286,8 +280,11 @@ class UserService extends BaseService
 
         $user['account'] = $account;
         $user['accountType'] = $accountType;
-        $user['tags'] = $this->getUserTags($user['id']);
-
+        $tagService=$this->di->get('tagService');
+        $user['tags'] = $tagService->getUserTags($user['id']);
+        foreach ($user['tags'] as &$tag){
+            $tag['html']=$tagService->getTagHtml($tag['name'],intval($tag['icon']));
+        }
         if (empty($user['photo'])) {
             $user['photo'] = STATIC_URL . '/image/default_user.jpg';
         }

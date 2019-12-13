@@ -40,5 +40,13 @@ return new \Phalcon\Config([
         'debug'=>true,
         'domain'=>'zhangyong.name',
         'domain2'=>'blog.zhangyong.name',
+        'tag'=>array(
+            '<label class="label label-default">{text}</label>',
+            '<label class="label label-primary">{text}</label>',
+            '<label class="label label-success">{text}</label>',
+            '<label class="label label-info">{text}</label>',
+            '<label class="label label-warning">{text}</label>',
+            '<label class="label label-danger">{text}</label>',
+        )
     ]
 ]);

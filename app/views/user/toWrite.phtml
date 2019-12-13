@@ -1,0 +1,112 @@
+<div class="toWrite-box">
+    <form class="form-horizontal" id="mForm" action="/user/writeArticle" method="post">
+        <input type='hidden' name='<?php echo $this->security->getTokenKey() ?>'
+               value='<?php echo $this->security->getToken() ?>'/>
+        <div class="form-group">
+            <label for="title" class="col-md-1 control-label">标题</label>
+            <div class="col-md-11">
+                <input type="text" class="form-control" name="title" id="title" placeholder="标题">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="content" class="col-md-1 control-label">内容</label>
+            <div class="col-md-11">
+                <textarea class="form-control" id="editor"></textarea>
+                <textarea class="form-horizontal" name="content" id="content" style="display: none"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="content" class="col-md-1 control-label">标签</label>
+            <div class="col-md-9">
+                <input id="tags" name="tags" placeholder="标签" class="form-control"/>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-info form-control" data-toggle="modal" data-target="#tag-pannel">
+                    标签库
+                </button>
+            </div>
+        </div>
+        <input type="hidden" value="1" name="drag" id="drag"/>
+        <div class="form-group">
+            <div class="col-sm-offset-1 col-md-11">
+                <button type="button" onclick="saveForm(1)" class="btn btn-success">提交</button>
+                <button type="button" onclick="saveForm(0)" class="btn btn-primary">保存草稿</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="modal fade" id="tag-pannel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">我的标签</h4>
+                </div>
+                <div class="modal-body">
+                    <?php
+                    /**
+                     * @var \app\services\UserService $userService
+                     */
+                    $user = $this->di->get('userService')->getLoginedUser();
+                    foreach ($user['tags'] as $tag) {
+                        echo $tag['html'];
+                    } ?>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="selectTags()" type="button" class="btn btn-primary" data-dismiss="modal">选择
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+$this->assets->addJs('/assets/plugs/ckeditor/ckeditor.js');
+$this->assets->addInlineJs(
+    <<<STR
+CKEDITOR.replace('editor',{
+        height:600
+    });
+    
+    function saveForm(val) {
+        var title=document.getElementById('title');
+        var content=document.getElementById("content");
+        var drag=document.getElementById('drag');
+        drag.value=val;
+
+        if(title.value===""){
+            alert("标题不能为空");
+        }
+
+        var data = CKEDITOR.instances.editor.getData();
+        if(data===""){
+            alert("内容不能为空");
+        }
+
+        content.value=data;
+
+        /*console.log(data);*/
+        $("#mForm").submit();
+    }
+    
+    
+     /**
+     * 选择标签库标签
+     */
+    function selectTags() {
+        let tags=[];
+        var tagChecks=$("#tag-pannel .modal-body .tag input");
+        for (let i = 0; i < tagChecks.length; i++) {
+            if(tagChecks[i].checked){
+                tags.push(tagChecks[i].value);
+            }
+        }
+
+        document.getElementById("tags").value=tags.join(',');
+    }
+    
+STR
+);
+?>
+

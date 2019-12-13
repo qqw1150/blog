@@ -40,4 +40,6 @@ abstract class Base
 
     public abstract function toArray();
 
+    public abstract function fillData($data);
+
 }

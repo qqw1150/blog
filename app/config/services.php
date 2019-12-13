@@ -52,20 +52,27 @@ $di->setShared(
                  */
                 $reflection = new ReflectionClass($controllerName);
                 $request = $reflection->newInstance()->request;
-                if ($actionName === 'login') {
-                    $loginForm = new LoginForm();
-                    $loginForm->setAccount($request->get('account', 'trim', ''));
-                    $loginForm->setPassword($request->get('password', 'trim', ''));
-                    $rememberMe = $request->get('rememberMe', 'int!', 0);
-                    $loginForm->setRememberMe($rememberMe);
-                    $dispatcher->setParams([$loginForm]);
-                } else if ($actionName === 'register') {
-                    $registerForm = new RegisterForm();
-                    $registerForm->setAccount($request->get('account', 'trim', ''));
-                    $registerForm->setPassword($request->get('password', 'trim', ''));
-                    $registerForm->setCaptcha($request->get('captcha', 'trim', ''));
-                    $dispatcher->setParams([$registerForm]);
-                }
+
+                $formClass='app\models\domains\\'.ucfirst($actionName).'Form';
+                $reflection2 = new ReflectionClass($formClass);
+                $formInstance=$reflection2->newInstance();
+                $formInstance->fillData($request->get());
+                $dispatcher->setParams([$formInstance]);
+
+//                if ($actionName === 'login') {
+//                    $loginForm = new LoginForm();
+//                    $loginForm->setAccount($request->get('account', 'trim', ''));
+//                    $loginForm->setPassword($request->get('password', 'trim', ''));
+//                    $rememberMe = $request->get('rememberMe', 'int!', 0);
+//                    $loginForm->setRememberMe($rememberMe);
+//                    $dispatcher->setParams([$loginForm]);
+//                } else if ($actionName === 'register') {
+//                    $registerForm = new RegisterForm();
+//                    $registerForm->setAccount($request->get('account', 'trim', ''));
+//                    $registerForm->setPassword($request->get('password', 'trim', ''));
+//                    $registerForm->setCaptcha($request->get('captcha', 'trim', ''));
+//                    $dispatcher->setParams([$registerForm]);
+//                }
 
             } catch (Exception $e) {
                 //控制器不存在什么都不做
@@ -213,3 +220,23 @@ $di->set('redis', function () use ($di) {
     $redis->auth($conf['password']);
     return $redis;
 });
+
+
+#########################  用户自定义服务  ###################################
+/**
+ * 加载业务服务
+ */
+if ($dp = opendir(APP_PATH . '/services/')) {
+    while (false !== ($file = readdir($dp))) {
+        if ($file !== '.' || $file !== '..' || strtolower(substr($file, 0, 4)) == 'base') {
+            $className   = substr($file, 0, strpos($file, '.php'));
+            $serviceName = strtolower(substr($className, 0, 1)) . substr($className, 1);
+            $fullClass   = "\app\services\\" . $className;
+            $di->set($serviceName, function () use ($fullClass) {
+                $service = new $fullClass();
+                return $service;
+            });
+        }
+    }
+    closedir($dp);
+}

@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\services\UserService;
 use app\services\ArticleService;
-use app\models\domains\ArticleForm;
+use app\models\domains\WriteArticleForm;
 use Phalcon\Crypt\Mismatch;
 
 /**
@@ -24,7 +24,7 @@ class IndexController extends ControllerBase
 
     public function testAction()
     {
-        $af = new ArticleForm();
+        $af = new WriteArticleForm();
         $af->setTitle("java");
         $af->setContent("hello java");
         $af->setTags("java,go,css");
@@ -48,7 +48,7 @@ class IndexController extends ControllerBase
     public function test3Action()
     {
         $s = microtime(true);
-        $af = new ArticleForm();
+        $af = new WriteArticleForm();
 //        $af->setId(7);
         $af->setTitle("go");
         $af->setContent("c++ go");

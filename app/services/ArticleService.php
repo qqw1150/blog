@@ -9,16 +9,18 @@
 namespace app\services;
 
 use app\exceptions\NotLoginException;
+use app\libraries\Page;
 use app\models\Article;
-use app\models\domains\ArticleForm;
+use app\models\domains\WriteArticleForm;
 use Phalcon\Db\Adapter\Pdo\Mysql;
 
 class ArticleService extends BaseService
 {
     /**
      * 保存文章（创建或修改）
-     * @param ArticleForm $articleForm
+     * @param WriteArticleForm $articleForm
      * @return bool
+     * @throws NotLoginException
      * @throws \Phalcon\Crypt\Mismatch
      */
     public function save($articleForm)
@@ -31,8 +33,10 @@ class ArticleService extends BaseService
 
         if ($articleForm->getId()) {
             $article = Article::findFirst($articleForm->getId());
+            $isNew = false;
         } else {
             $article = new Article();
+            $isNew = true;
         }
 
         $article->setTitle($articleForm->getTitle());
@@ -54,25 +58,50 @@ class ArticleService extends BaseService
             return false;
         }
 
-        $s = microtime(true);
         /**
          * 添加标签
          * @var TagService $tagService
          */
         $tagService = $this->di->get('tagService');
         $tagNames = $articleForm->getTags();
-        $b = $tagService->saveArticleTag($tagNames, $article->getId());
+        if ($isNew && count($tagNames) > 0) {
+            $b = $tagService->addArticleTags($tagNames, $article->getId());
+        } else {
+            $b = $tagService->updateArticleTags($tagNames, $article->getId());
+        }
         if ($b === false) {
             $db->rollback();
             return false;
         }
-        $e = microtime(true);
 
         $db->commit();
-        var_dump($e - $s);
-        exit;
 
         return true;
     }
+
+    /**
+     * 获取用户文章
+     * @param Page $page
+     * @param int $userId
+     * @return Page
+     */
+    public function listOfUser($page, $userId)
+    {
+        $index = $page->getIndex();
+        $rows = $page->getPageSize();
+        $sql = "select id,title,content,user_id,ctime from blog.article where user_id=? order by id desc limit {$index},{$rows}";
+        $rs = $this->db->query($sql, [$userId]);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $articles = $rs->fetchAll();
+
+        $sql = "select count(id) from blog.article where user_id=?";
+        $rs = $this->db->query($sql, [$userId]);
+        $rs->setFetchMode(\PDO::FETCH_NUM);
+        $totalRes = $rs->fetchArray();
+        $page->setTotalItems($totalRes[0]);
+        $page->setItems($articles);
+        return $page;
+    }
+
 
 }

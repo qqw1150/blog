@@ -29,11 +29,6 @@ try {
     include APP_PATH . '/config/services.php';
 
     /**
-     * 业务服务
-     */
-    include APP_PATH . '/config/business_service.php';
-
-    /**
      * @var \Phalcon\Config $config
      * Get config service for use in inline setup below
      */
@@ -51,7 +46,11 @@ try {
 
     echo str_replace(["\n","\r","\t"], '', $application->handle()->getContent());
 
-} catch (\Exception $e) {
+}catch (\Exception $e) {
+    if($e instanceof \app\exceptions\NotLoginException){
+        header("location:/user/loginHtml");exit;
+    }
+
     if($config->application->debug){
         throw $e;
     }

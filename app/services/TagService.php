@@ -78,6 +78,61 @@ class TagService extends BaseService
     }
 
     /**
+     * 添加用户标签
+     * @param $tagNames
+     * @param $articleId
+     * @return bool
+     */
+    public function addArticleTags($tagNames, $articleId)
+    {
+        $tags = $this->addTags($tagNames);
+
+        $val = "";
+        foreach ($tags as $key => $tag) {
+            if ($key > 0) {
+                $val .= ",";
+            }
+            $val .= "(null,{$articleId},{$tag['id']})";
+        }
+        $sql = "insert into article_tag values {$val}";
+        $b = $this->db->execute($sql);
+        if ($b === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * 添加标签
+     * @param $tagNames
+     * @param bool $return
+     * @return array
+     */
+    public function addTags($tagNames)
+    {
+        $tags = $this->getTagsByNames($tagNames);
+        $arr = [];
+        $tagTmp = [];
+        foreach ($tags as $tag) {
+            $tagTmp[] = $tag['name'];
+        }
+        foreach ($tagNames as $tagName) {
+            if (!in_array($tagName, $tagTmp)) {
+                $arr[] = $tagName;
+            }
+        }
+        if (count($arr) > 0) {
+            $this->insertList($arr);
+        }
+
+        $tags = $this->getTagsByNames($tagNames);
+        return $tags;
+
+    }
+
+    /**
      * 保持文章tag
      * @param $tagNames
      * @param $articleId
@@ -93,21 +148,7 @@ class TagService extends BaseService
             return false;
         }
 
-        $tags = $this->getTagsByNames($tagNames);
-        $arr = [];
-        $tagTmp = [];
-        foreach ($tags as $tag) {
-            $tagTmp[] = $tag['name'];
-        }
-        foreach ($tagNames as $tagName) {
-            if (!in_array($tagName, $tagTmp)) {
-                $arr[] = $tagName;
-            }
-        }
-        if (count($arr) > 0) {
-            $this->insertList($arr);
-        }
-        $tags = $this->getTagsByNames($tagNames);
+        $tags = $this->addTags($tagNames);
 
 
         $total = $this->getArticleTagCountByAid($articleId);
@@ -186,11 +227,52 @@ class TagService extends BaseService
             return false;
         }
 
-        $sql = "select t.name,t.icon,t.id,art.article_id from `article_tag` art left join `tag` t on art.tag_id=t.id where art.article_id in (" . implode(',', array_fill(0, count($articleIds), '?')) . ")";
+        $sql = "select distinct t.name,t.icon,t.id from `article_tag` art left join `tag` t on art.tag_id=t.id where art.article_id in (" . implode(',', array_fill(0, count($articleIds), '?')) . ")";
         $rs = $this->db->query($sql, $articleIds);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
         $res = $rs->fetchAll();
 
         return $res;
+    }
+
+    public function getTagHtml($name, $icon)
+    {
+        switch ($icon) {
+            case 1:
+                $type = 'primary';
+                break;
+            case 2:
+                $type = 'success';
+                break;
+            case 3:
+                $type = 'info';
+                break;
+            case 4:
+                $type = 'warning';
+                break;
+            case 5:
+                $type = 'danger';
+                break;
+            default:
+                $type = 'default';
+        }
+
+        $html = "<div class='tag'><label for='tag_{$name}' class='label label-{$type}'>{$name}</label><input type='checkbox' name='tags' id='tag_{$name}' value='{$name}'/></div>";
+        return $html;
+    }
+
+    /**
+     * @param array $tagNames
+     * @param int $getId
+     */
+    public function updateArticleTags(array $tagNames, int $articleId)
+    {
+        $this->db->begin();
+
+        $delIds = $this->deleteArticleTagSoft($articleId);
+        if (false === $delIds) {
+            $this->db->rollback();
+            return false;
+        }
     }
 }

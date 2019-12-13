@@ -2,12 +2,12 @@
     <?php
         $controller=$this->dispatcher->getControllerName();
         $viewStr='layouts/'.$controller;
-        if($this->view->exists($viewStr)){
+        $params=$this->view->getParamsToView();
+        if($this->view->exists($viewStr) && empty($params['noLayout'])){
     ?>
         <div class="left"><?php echo $this->getContent();?></div>
         <div class="right">
             <?php
-                $params=$this->view->getParamsToView();
                 $this->view->partial('layouts/'.$controller,$params);
             ?>
         </div>

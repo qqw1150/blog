@@ -1,1 +1,345 @@
-body,a,ul,a:hover{margin:0;padding:0;list-style:none;text-decoration:none}a{text-decoration:none;color:#4183c4}a:hover{text-decoration:none;color:#0676e4}button{border:none}body{background-color:#efe9e9}.header{width:100%;height:80px;background-color:#009688;font-size:14px;display:flex;align-items:center;position:relative}.header .logo{display:flex;flex-direction:row;height:60px;margin:auto 0}.header .logo .right{width:100px;text-align:center;line-height:60px;font-size:28px;font-weight:bold}.header .user{display:flex;flex-direction:row;align-content:center}.header .user div{margin-left:8px}.header .user .pic{width:50px;height:50px}.header .user .pic img{width:100%;height:100%}.header .user .name,.header .user .opt{height:50px;line-height:50px}.header .user .name{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.header .opts li>a{border-radius:4px;color:white;font-size:14px;font-weight:bold;background:none}.header .opts li>a:hover{background:none}@media (min-width:1500px){.container{max-width:1300px}}@media (min-width:1800px){.container{max-width:1500px}}.container .body{width:100%;height:100%;margin-top:10px;display:flex;flex-direction:row}.container .body .left{width:80%;height:100%;border:1px solid #e4e4e4;background-color:#f6f6f6;border-radius:5px}.container .body .left-full{height:100%}.container .body .right{width:19%;height:100%;border:1px solid #e4e4e4;background-color:#f6f6f6;border-radius:5px;margin-left:1%;padding:0 10px}#userPopover{width:120px;margin:0;padding:0;position:absolute;display:none}#userPopover .popover-content{padding-left:0;padding-right:0}#userPopover .dh{border:1px solid #e9ecef}#userPopover .item{font-size:16px;padding:10px 0;text-indent:18px;display:block;cursor:pointer;color:#1d2124}#userPopover .item:hover{background-color:#e9ecef;color:#1d2124}#userPopover .logout{padding:10px 0;text-indent:18px;border-top:1px solid #e9ecef}.login-box{margin:100px auto 0 auto;background-color:white;width:600px;border:1px solid #dadada;border-radius:5px;padding:40px 0}.login-box .login-title h1{width:100%;height:50px;line-height:50px;text-align:center;font-size:36px}.login-box .login-body .login-item{margin:20px auto;width:80%;height:48px;line-height:48px;position:relative}.login-box .login-body .login-item .input-text{width:100%;height:100%;border:1px solid gray;border-radius:5px;padding:5px 5px 5px 10px}.login-box .login-body .login-item .input-text:focus{border-color:#599bda;border-radius:5px}.login-box .login-body .login-item .submit{background-color:#21ba45;border-radius:5px;width:100%;height:100%;text-align:center;cursor:pointer;color:whitesmoke;font-size:16px;font-weight:bold}.login-box .login-body .login-item2 label{height:100%;position:relative}.login-box .login-body .login-item2 label .input-checkbox{position:absolute;top:50%;margin-top:-10px;width:20px;height:20px}.login-box .login-body .login-item2 label span{margin-left:25px}.login-box .login-body .login-item2 .forget{float:right}.register-box{margin:100px auto 0 auto;background-color:white;width:600px;border:1px solid #dadada;border-radius:5px;padding:40px 0}.register-box .register-title h1{width:100%;height:50px;line-height:50px;text-align:center;font-size:36px}.register-box .register-body .register-item{margin:20px auto;width:80%;height:48px;line-height:48px;position:relative}.register-box .register-body .register-item .input-text{width:100%;height:100%;border:1px solid gray;border-radius:5px;padding:5px 5px 5px 10px}.register-box .register-body .register-item .input-text:focus{border-color:#599bda;border-radius:5px}.register-box .register-body .register-item .submit{background-color:#21ba45;border-radius:5px;width:100%;height:100%;text-align:center;cursor:pointer;color:whitesmoke;font-size:16px;font-weight:bold}.register-box .register-body .register-item2{display:flex;flex-direction:row}.register-box .register-body .register-item2 .input-text{width:60%}.register-box .register-body .register-item2 .captcha{width:40%;margin-left:4%;display:flex;flex-direction:row;justify-content:right}.register-box .register-body .register-item2 .captcha .refreshCaptcha{margin-left:10px}.register-box .register-body .register-item2 .captcha #captchaImg{cursor:pointer}
+#userPopover {
+    width: 120px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    display: none
+}
+
+#userPopover .popover-content {
+    padding-left: 0;
+    padding-right: 0
+}
+
+#userPopover .dh {
+    border: 1px solid #e9ecef
+}
+
+#userPopover .item {
+    font-size: 16px;
+    padding: 10px 0;
+    text-indent: 18px;
+    display: block;
+    cursor: pointer;
+    color: #1d2124
+}
+
+#userPopover .item:hover {
+    background-color: #e9ecef;
+    color: #1d2124
+}
+
+#userPopover .logout {
+    padding: 10px 0;
+    text-indent: 18px;
+    border-top: 1px solid #e9ecef
+}
+
+.login-box {
+    margin: 100px auto 0 auto;
+    background-color: white;
+    width: 600px;
+    border: 1px solid #dadada;
+    border-radius: 5px;
+    padding: 40px 0
+}
+
+.login-box .login-title h1 {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 36px
+}
+
+.login-box .login-body .login-item {
+    margin: 20px auto;
+    width: 80%;
+    height: 48px;
+    line-height: 48px;
+    position: relative
+}
+
+.login-box .login-body .login-item .input-text {
+    width: 100%;
+    height: 100%;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 5px 5px 5px 10px
+}
+
+.login-box .login-body .login-item .input-text:focus {
+    border-color: #599bda;
+    border-radius: 5px
+}
+
+.login-box .login-body .login-item .submit {
+    background-color: #21ba45;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+    color: whitesmoke;
+    font-size: 16px;
+    font-weight: bold
+}
+
+.login-box .login-body .login-item2 label {
+    height: 100%;
+    position: relative
+}
+
+.login-box .login-body .login-item2 label .input-checkbox {
+    position: absolute;
+    top: 50%;
+    margin-top: -10px;
+    width: 20px;
+    height: 20px
+}
+
+.login-box .login-body .login-item2 label span {
+    margin-left: 25px
+}
+
+.login-box .login-body .login-item2 .forget {
+    float: right
+}
+
+.register-box {
+    margin: 100px auto 0 auto;
+    background-color: white;
+    width: 600px;
+    border: 1px solid #dadada;
+    border-radius: 5px;
+    padding: 40px 0
+}
+
+.register-box .register-title h1 {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 36px
+}
+
+.register-box .register-body .register-item {
+    margin: 20px auto;
+    width: 80%;
+    height: 48px;
+    line-height: 48px;
+    position: relative
+}
+
+.register-box .register-body .register-item .input-text {
+    width: 100%;
+    height: 100%;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 5px 5px 5px 10px
+}
+
+.register-box .register-body .register-item .input-text:focus {
+    border-color: #599bda;
+    border-radius: 5px
+}
+
+.register-box .register-body .register-item .submit {
+    background-color: #21ba45;
+    border-radius: 5px;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+    color: whitesmoke;
+    font-size: 16px;
+    font-weight: bold
+}
+
+.register-box .register-body .register-item2 {
+    display: flex;
+    flex-direction: row
+}
+
+.register-box .register-body .register-item2 .input-text {
+    width: 60%
+}
+
+.register-box .register-body .register-item2 .captcha {
+    width: 40%;
+    margin-left: 4%;
+    display: flex;
+    flex-direction: row;
+    justify-content: right
+}
+
+.register-box .register-body .register-item2 .captcha .refreshCaptcha {
+    margin-left: 10px
+}
+
+.register-box .register-body .register-item2 .captcha #captchaImg {
+    cursor: pointer
+}
+
+/*************** 写作页面 **********************/
+.toWrite-box .form-horizontal {
+    margin: 20px;
+}
+
+.toWrite-box #content {
+    height: 600px;
+}
+
+.toWrite-box #tag-pannel .modal-body .tag label {
+    display: inline-block;
+    padding: 5px;
+    margin: 2px 5px;
+    font-size: 12px;
+}
+
+.toWrite-box #tag-pannel .modal-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.toWrite-box #tag-pannel .modal-body .tag {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    margin: 2px 5px;
+}
+
+
+
+/**************** 文章列表 ********************/
+.articleList-box .box {
+    margin: 10px
+}
+
+.articleList-box  .box .box_title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 18px;
+    font-weight: bold
+}
+
+.articleList-box .box .box_body {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.articleList-box .article {
+    margin: 10px;
+    border: 1px solid gainsboro;
+    border-radius: 5px
+}
+
+.articleList-box .article a, .article a:hover {
+    color: #414142;
+    text-decoration: none
+}
+
+.articleList-box .article .title {
+    margin: 5px 10px;
+    font-size: 16px;
+    height: 30px;
+    line-height: 30px
+}
+
+.articleList-box .article .content {
+    margin: 0 10px;
+    font-size: 14px;
+    min-height: 50px;
+    max-height: 80px
+}
+
+.articleList-box .article .state {
+    margin: 5px 10px;
+    font-size: 12px;
+    text-align: right
+}
+
+.articleList-box .pager {
+    display: flex;
+    flex-direction: row;
+    width: 300px;
+    margin: 10px auto;
+    text-align: center;
+    font-size: 12px
+}
+
+.articleList-box .pager .item {
+    height: 35px;
+    line-height: 35px;
+    border: 1px solid #b3b3b3;
+    width: 20%;
+    margin-right: 10px;
+    color: #414142;
+    text-decoration: none;
+    border-radius: 5px
+}
+
+.articleList-box .pager a.item:hover {
+    background-color: #eae4e4
+}
+
+.articleList-box .pager .last {
+    margin-right: 0
+}
+
+.articleList-box .panel {
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.articleList-box .panel .panel_title {
+    height: 30px;
+    line-height: 30px;
+    background-color: #f7b15e
+}
+
+.articleList-box .panel .panel_body {
+    border: 1px solid gainsboro;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2px
+}
+
+.articleList-box .panel .panel_body .panel_item {
+    font-size: 12px;
+    padding: 2px 6px;
+    margin: 2px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold
+}
+
+.articleList-box .panel .panel_body .item-red {
+    background-color: #d44c4c
+}
+
+.articleList-box .panel .panel_body .item-blue {
+    background-color: #1880f1
+}
+
+.articleList-box .panel .panel_body .item-green {
+    background-color: #2e9044
+}
+
+.articleList-box .panel .panel_body .item-black {
+    background-color: #6b737b
+}
+
+.articleList-box .panel .panel_body .item-orange {
+    background-color: #d28b26
+}

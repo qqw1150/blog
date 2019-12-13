@@ -20,10 +20,10 @@ use app\services\UserService;
  */
 class LoginForm extends Base
 {
-    protected $account;
-    protected $password;
+    protected $account='';
+    protected $password='';
     protected $accountType;
-    protected $rememberMe;
+    protected $rememberMe=0;
 
     /**
      * @return boolean
@@ -38,8 +38,8 @@ class LoginForm extends Base
      */
     public function setRememberMe($rememberMe)
     {
-        if(is_int($rememberMe)){
-            $this->rememberMe = ($rememberMe===1 ? true : false);
+        if (is_int($rememberMe)) {
+            $this->rememberMe = ($rememberMe === 1 ? true : false);
         }
 
         $this->rememberMe = $rememberMe;
@@ -103,5 +103,12 @@ class LoginForm extends Base
     public function toArray()
     {
         return parent::_toArray(self::class);
+    }
+
+    public function fillData($data)
+    {
+        $this->setAccount($data['account']);
+        $this->setPassword($data['password']);
+        $this->setRememberMe($data['rememberMe']);
     }
 }

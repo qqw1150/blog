@@ -20,9 +20,9 @@ use app\services\UserService;
  */
 class RegisterForm extends Base
 {
-    protected $account;
-    protected $password;
-    protected $captcha;
+    protected $account='';
+    protected $password='';
+    protected $captcha='';
     protected $accountType;
 
     /**
@@ -99,4 +99,10 @@ class RegisterForm extends Base
     }
 
 
+    public function fillData($data)
+    {
+        $this->setAccount($data['account']);
+        $this->setPassword($data['password']);
+        $this->setCaptcha($data['captcha']);
+    }
 }
