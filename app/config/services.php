@@ -3,6 +3,8 @@
 use app\models\domains\RegisterForm;
 use app\models\domains\LoginForm;
 use Phalcon\Crypt;
+use Phalcon\Db\Profiler;
+use Phalcon\Events\Event;
 use Phalcon\Flash\Direct as Flash;
 use Phalcon\Http\Response\Cookies;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
@@ -53,9 +55,9 @@ $di->setShared(
                 $reflection = new ReflectionClass($controllerName);
                 $request = $reflection->newInstance()->request;
 
-                $formClass='app\models\domains\\'.ucfirst($actionName).'Form';
+                $formClass = 'app\models\domains\\' . ucfirst($actionName) . 'Form';
                 $reflection2 = new ReflectionClass($formClass);
-                $formInstance=$reflection2->newInstance();
+                $formInstance = $reflection2->newInstance();
                 $formInstance->fillData($request->get());
                 $dispatcher->setParams([$formInstance]);
 
@@ -134,7 +136,26 @@ $di->setShared('db', function () {
         unset($params['charset']);
     }
 
+    if ($config->application->debug) {
+        $profiler = new Profiler();
+        $manager = new \Phalcon\Events\Manager();
+        $manager->attach('db', function (Event $event, \Phalcon\Db\Adapter\Pdo\Mysql $connection) use ($profiler) {
+            if (strpos($event->getType(),'before')!==false) {
+                $sql = $connection->getSQLStatement();
+                $profiler->startProfile($sql);
+            }
+
+            if (strpos($event->getType(),'after')!==false) {
+                $profiler->stopProfile();
+            }
+        });
+    }
+
+    /**
+     * @var \Phalcon\Db\Adapter\Pdo\Mysql $connection
+     */
     $connection = new $class($params);
+    $connection->setEventsManager($manager);
 
     return $connection;
 });
@@ -216,7 +237,7 @@ $di->set('redis', function () use ($di) {
     $config = $di->get('config');
     $conf = $config->redis;
     $redis = new \Redis();
-    $redis->connect($conf['host'],$conf['port'],$conf['timeout']);
+    $redis->connect($conf['host'], $conf['port'], $conf['timeout']);
     $redis->auth($conf['password']);
     return $redis;
 });
@@ -229,9 +250,9 @@ $di->set('redis', function () use ($di) {
 if ($dp = opendir(APP_PATH . '/services/')) {
     while (false !== ($file = readdir($dp))) {
         if ($file !== '.' || $file !== '..' || strtolower(substr($file, 0, 4)) == 'base') {
-            $className   = substr($file, 0, strpos($file, '.php'));
+            $className = substr($file, 0, strpos($file, '.php'));
             $serviceName = strtolower(substr($className, 0, 1)) . substr($className, 1);
-            $fullClass   = "\app\services\\" . $className;
+            $fullClass = "\app\services\\" . $className;
             $di->set($serviceName, function () use ($fullClass) {
                 $service = new $fullClass();
                 return $service;

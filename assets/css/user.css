@@ -44,6 +44,18 @@
     padding: 40px 0
 }
 
+.login-box .errors{
+    width: 80%;
+    margin: 5px auto;
+    padding: 5px 0;
+    text-indent: 10px;
+}
+
+.login-box .errors .close{
+    right: 8px;
+    top: 0;
+}
+
 .login-box .login-title h1 {
     width: 100%;
     height: 50px;
@@ -115,6 +127,18 @@
     padding: 40px 0
 }
 
+.register-box .errors{
+    width: 80%;
+    margin: 5px auto;
+    padding: 5px 0;
+    text-indent: 10px;
+}
+
+.register-box .errors .close{
+    right: 8px;
+    top: 0;
+}
+
 .register-box .register-title h1 {
     width: 100%;
     height: 50px;
@@ -182,8 +206,9 @@
 }
 
 /*************** 写作页面 **********************/
-.toWrite-box .form-horizontal {
-    margin: 20px;
+.toWrite-box {
+    background: #fdfdfd;
+    padding: 15px;
 }
 
 .toWrite-box #content {
@@ -215,7 +240,18 @@
 
 /**************** 文章列表 ********************/
 .articleList-box .box {
-    margin: 10px
+    margin: 0 10px 10px 10px;
+    border: 1px solid #e4e4e4;
+    background-color: #fdfdfd;
+}
+
+.articleList-box .nobody{
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+    margin: 0 10px 10px 10px;
+    border: 1px solid #e4e4e4;
+    background-color: #fdfdfd;
 }
 
 .articleList-box  .box .box_title {
@@ -244,18 +280,43 @@
     color: #414142;
     text-decoration: none
 }
-
+.articleList-box .article .head{
+    position: relative;
+}
 .articleList-box .article .title {
     margin: 5px 10px;
     font-size: 16px;
     height: 30px;
-    line-height: 30px
+    line-height: 30px;
+    float: left;
+    font-weight: bold;
+}
+
+
+.articleList-box .article .head .opt ,.articleList-box .article .head .show{
+    float: right;
+    display: flex !important;;
+    flex-direction: row;
+    margin: 5px 10px;
+}
+.articleList-box .article .head .opt .item{
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 5px;
+    color: #4183c4;
+}
+.articleList-box .article .head .show .item{
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    margin: 0 5px;
 }
 
 .articleList-box .article .content {
     margin: 0 10px;
     font-size: 14px;
-    min-height: 50px;
+    min-height: 20px;
     max-height: 80px
 }
 
@@ -282,7 +343,9 @@
     margin-right: 10px;
     color: #414142;
     text-decoration: none;
-    border-radius: 5px
+    border-radius: 5px;
+    border: 1px solid #e4e4e4;
+    background-color: #fdfdfd;
 }
 
 .articleList-box .pager a.item:hover {
@@ -321,7 +384,7 @@
     text-align: center;
     border-radius: 5px;
     color: white;
-    font-weight: bold
+    font-weight: bold;
 }
 
 .articleList-box .panel .panel_body .item-red {

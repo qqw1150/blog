@@ -6,5 +6,4 @@
  * Time: 13:17
  */
 
-
 defined('STATIC_URL') OR define('STATIC_URL','http://blog.zhangyong.name/assets');

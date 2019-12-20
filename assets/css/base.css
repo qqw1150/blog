@@ -88,14 +88,18 @@ body {
 
 .header .user .name, .header .user .opt {
     height: 50px;
-    line-height: 50px
+    line-height: 50px;
+    color: whitesmoke;
+    font-size: 16px;
 }
 
-.header .user .name {
-    max-width: 150px;
+.header .user .name a{
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap
+    white-space: nowrap;
+    width: 160px;
+    max-width: 170px;
 }
 
 .header .opts li > a {
@@ -156,9 +160,9 @@ body {
 .container .body .left {
     width: 80%;
     height: 100%;
-    border: 1px solid #e4e4e4;
-    background-color: #f6f6f6;
-    border-radius: 5px
+    /*border: 1px solid #e4e4e4;*/
+    /*background-color: #f6f6f6;*/
+    /*border-radius: 5px*/
 }
 
 .container .body .left-full {
@@ -168,9 +172,12 @@ body {
 .container .body .right {
     width: 19%;
     height: 100%;
-    border: 1px solid #e4e4e4;
-    background-color: #f6f6f6;
-    border-radius: 5px;
+    /*border: 1px solid #e4e4e4;*/
+    /*background-color: #f6f6f6;*/
+    /*border-radius: 5px;*/
     margin-left: 1%;
     padding: 0 10px
+}
+.clear{
+    clear: both;
 }

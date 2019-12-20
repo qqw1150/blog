@@ -12,7 +12,7 @@ use Phalcon\Validation\Validator\Email as EmailValidator;
  * @property string $name
  * @package app\models
  */
-class Tag extends \Phalcon\Mvc\Model
+class Tag extends Base
 {
 
     /**

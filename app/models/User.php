@@ -6,7 +6,7 @@ use app\validations\validators\PhoneValidator;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 
-class User extends \Phalcon\Mvc\Model
+class User extends Base
 {
     const ACCOUNT_PHONE = 1; #手机类型账号
     const ACCOUNT_EMAIL = 2; #邮箱类型账号
@@ -57,7 +57,7 @@ class User extends \Phalcon\Mvc\Model
     private $timeout;
 
     /**
-     * @return int
+     * @return int|string
      */
     public function getTimeout()
     {
@@ -258,5 +258,15 @@ class User extends \Phalcon\Mvc\Model
     public static function findFirst($parameters = null)
     {
         return parent::findFirst($parameters);
+    }
+
+    /**
+     * @param array $data
+     * @return User|null
+     * @throws \ReflectionException
+     */
+    public static function toObj($data)
+    {
+        return parent::_toObj($data, self::class);
     }
 }

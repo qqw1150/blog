@@ -1,0 +1,18 @@
+<div class="showArticle-box">
+    <div class="article">
+        <h1 class="title"><?php echo $article['title']?></h1>
+        <div class="meta">
+            <div class="item date"><?php echo $article['ctime']?></div>
+            <div class="item author"><span class="glyphicon glyphicon-user"></span>李四</div>
+            <div class="item watch"><span class="glyphicon glyphicon-eye-open"></span>2</div>
+            <div class="item remark"><span class="glyphicon glyphicon-comment"></span>1</div>
+        </div>
+        <div class="tag">标签：<span class="glyphicon glyphicon-tags"></span><?php echo 'java、php、go'?></div>
+        <div class="content">
+            <pre><code class="language-javascript hljs">// Vue 根实例new Vue({  data: {    foo: 1  },  computed: {    bar: function () { /* ... */ }  },  methods: {    baz: function () { /* ... */ }  }})</code></pre>
+
+            <?php echo $article['content']?></div>
+    </div>
+</div>
+
+<?php $this->assets->addInlineJs("hljs.initHighlightingOnLoad();"); ?>

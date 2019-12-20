@@ -14,7 +14,6 @@ namespace app\libraries;
  * @property int $current
  * @property int $before
  * @property int $next
- * @property int $last
  * @property int $totalPages
  * @property int $pageSize
  * @property array $items
@@ -22,12 +21,11 @@ namespace app\libraries;
 class Page
 {
     private $current;
-    private $last;
     private $items;
     private $totalItems;
     private $pageSize;
 
-    public function __construct($current = 1, $pageSize = 20)
+    public function __construct($current = 1, $pageSize = 2)
     {
         $this->current = intval($current);
         $this->pageSize = intval($pageSize);
@@ -64,14 +62,6 @@ class Page
     /**
      * @return int
      */
-    public function getLast(): int
-    {
-        return empty($this->last) ? 1 : $this->last;
-    }
-
-    /**
-     * @return int
-     */
     public function getTotalPages(): int
     {
         if ($this->totalItems % $this->pageSize === 0) {
@@ -94,7 +84,7 @@ class Page
      */
     public function getNext()
     {
-        if ($this->current === $this->last) {
+        if ($this->current === $this->getTotalPages()) {
             return $this->current;
         } else {
             return $this->current + 1;

@@ -35,5 +35,15 @@ class ControllerBase extends Controller
     {
         $this->view->disableLevel(\Phalcon\Mvc\View::LEVEL_LAYOUT);
         $this->view->setTemplateAfter('common');
-    }   
+    }
+
+    public function goBack(){
+        $domain=$this->config->application->domain2;
+        if(isset($_SERVER['HTTP_REFERER']) && preg_match("@https?://".$domain."@i",$_SERVER['HTTP_REFERER'])){
+            return $this->response->redirect($_SERVER['HTTP_REFERER']);
+        }else{
+            return $this->response->redirect('/');
+        }
+    }
+
 }

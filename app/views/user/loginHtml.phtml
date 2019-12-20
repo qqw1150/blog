@@ -1,6 +1,17 @@
 <div class="login-box">
     <div class="login-title"><h1>用户登录</h1></div>
-    <?php echo $this->flash->output();?>
+    <?php
+    if ($this->flashSession->has('error')) {
+        $messages = $this->flashSession->getMessages('error');
+        foreach ($messages as $message) {
+            echo '<div class="alert alert-danger alert-dismissible errors" role="alert">';
+            echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+            echo $message;
+            echo '</div>';
+        }
+    }
+    ?>
+
     <div class="login-body">
         <form action="/user/login" method="post">
         <div class="login-item"><input class="input-text" type="text" name="account" placeholder="手机号或邮箱"/></div>

@@ -32,30 +32,35 @@ class UserService extends BaseService
      * 登录
      * @param LoginForm $loginForm ;
      * @return \Phalcon\Mvc\Model\ResultsetInterface|boolean
+     * @throws \ReflectionException
      */
     public function login($loginForm)
     {
         if ($loginForm->getAccountType() === User::ACCOUNT_PHONE) {
-            $accountWhere = 'phone=?0 and password=?1';
+            $accountWhere = 'phone=? and password=?';
         } else {
-            $accountWhere = 'email=?0 and password=?1';
+            $accountWhere = 'email=? and password=?';
         }
-        /**
-         * @var Simple $userRs
-         */
-        $userRs = User::query()->where($accountWhere, [$loginForm->getAccount(), $loginForm->getPassword()])->execute();
-        if (!empty($userRs->count())) {
-            $selectRememberMe = $loginForm->getRememberMe();
-            if ($selectRememberMe) {
-                if ($this->rememberMe($userRs) == false) {
-                    return false;
-                }
+
+        $sql="select id,email,phone,photo,nickname from user where {$accountWhere}";
+        $rs=$this->db->query($sql,[$loginForm->getAccount(), $loginForm->getPassword()]);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $user=$rs->fetchArray();
+        $userObj = User::toObj($user);
+
+        if(empty($userObj)){
+            return false;
+        }
+
+        $selectRememberMe = $loginForm->getRememberMe();
+        if ($selectRememberMe) {
+            if ($this->rememberMe($userObj) == false) {
+                return false;
             }
-
-            $this->saveUserSession($userRs);
         }
 
-        return false;
+        $this->saveUserSession($user);
+        return true;
     }
 
     /**
@@ -170,10 +175,10 @@ class UserService extends BaseService
 
     /**
      * 记住密码
-     * @param Simple $userRs
+     * @param User $user
      * @return bool
      */
-    public function rememberMe($userRs)
+    public function rememberMe($user)
     {
         /**
          * @var Config $config
@@ -183,7 +188,6 @@ class UserService extends BaseService
          * @var Crypt $crypt
          */
         $cookies = $this->di->get('cookies');
-        $user = $userRs->getFirst();
         $account = !empty($user->getPhone()) ? $user->getPhone() : $user->getEmail();
         $identifier = $this->getIdentifier($account);
         $token = $this->getToken();
@@ -192,12 +196,9 @@ class UserService extends BaseService
         $user->setToken($token);
         $user->setTimeout($expire);
 
-        if ($user->update() === false) {
-            $logger = $this->di->get('logger');
-            $messages = $user->getMessages();
-            foreach ($messages as $message) {
-                $logger->error($message->getMessage() . '-' . $message->getType() . '-' . $message->getField());
-            }
+        $sql="update user set token=?,timeout=?,identifier=? where id=?";
+        $b = $this->db->execute($sql,[$user->getToken(),$user->getTimeout(),$user->getIdentifier(),$user->getId()]);
+        if ($b === false) {
             return false;
         }
 
@@ -205,7 +206,6 @@ class UserService extends BaseService
         $msg = $crypt->encrypt(json_encode(['identifier' => $identifier, 'token' => $token]), $crypt->getKey());
         $config = $this->di->get('config');
         $cookies->set('auth', $msg, $expire, '/', false, $config->application->domain2)->send();
-
 
         return true;
     }
@@ -234,28 +234,27 @@ class UserService extends BaseService
 
             $identifier = $auth['identifier'];
             $token = $auth['token'];
-            /**
-             * @var User $user
-             * @var Simple $userRs
-             */
-            $userRs = User::query()->where('identifier=?0', [$identifier])->execute();
 
-            if ($userRs->count() === 0) {
+            $sql="select * from user where identifier=?";
+            $rs=$this->db->query($sql,[$identifier]);
+            $rs->setFetchMode(\PDO::FETCH_ASSOC);
+            $user=$rs->fetchArray();
+
+            if (empty($user)) {
                 //不存在token身份
                 return false;
             }
 
-            $user = $userRs->getFirst();
 
-            if ($user->getToken() != $token) {
+            if ($user['token'] != $token) {
                 //token不正确
                 return false;
-            } else if (time() > $user->getTimeout()) {
+            } else if (time() > $user['timeout']) {
                 //token过期
                 return false;
             }
 
-            return $this->saveUserSession($userRs);
+            return $this->saveUserSession($user);
         }
 
         return false;
@@ -264,17 +263,15 @@ class UserService extends BaseService
 
     /**
      * 保持用户数据到session
-     * @param Simple $userRs
+     * @param array $user
      */
-    public function saveUserSession($userRs)
+    public function saveUserSession($user)
     {
         /**
          * @var Files $session
          * @var TagService $tagService
          */
         $session = $this->di->get('session');
-        $user = $userRs->toArray();
-        $user = $user[0];
         $account = !empty($user['phone']) ? $user['phone'] : $user['email'];
         $accountType = self::getAccountType($account);
 

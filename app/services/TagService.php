@@ -94,7 +94,7 @@ class TagService extends BaseService
             }
             $val .= "(null,{$articleId},{$tag['id']})";
         }
-        $sql = "insert into article_tag values {$val}";
+        $sql = "insert into article_tag(id,article_id,tag_id) values {$val}";
         $b = $this->db->execute($sql);
         if ($b === false) {
             return false;
@@ -133,42 +133,60 @@ class TagService extends BaseService
     }
 
     /**
-     * 保持文章tag
+     * 修改文章tag
      * @param $tagNames
      * @param $articleId
      * @return bool
      */
-    public function saveArticleTag($tagNames, $articleId)
+    public function updateArticleTags($tagNames, $articleId)
     {
         $this->db->begin();
 
-        $delIds = $this->deleteArticleTagSoft($articleId);
-        if (false === $delIds) {
-            $this->db->rollback();
-            return false;
+        $tags = $this->addTags($tagNames);
+        $distIds = [];
+        foreach ($tags as $val) {
+            $distIds[] = $val['id'];
         }
 
-        $tags = $this->addTags($tagNames);
+        $sql = "select tag_id from article_tag where article_id=?";
+        $rs = $this->db->query($sql, [$articleId]);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $res = $rs->fetchAll();
+        $srcIds = [];
+        foreach ($res as $val) {
+            $srcIds[] = $val['tag_id'];
+        }
 
+        $t1 = array_values(array_diff($srcIds, $distIds));
+        $t2 = array_values(array_diff($distIds, $srcIds));
 
-        $total = $this->getArticleTagCountByAid($articleId);
-        foreach ($tags as $key => $tag) {
-            if ($key > ($total - 1)) {
-                $sql = "insert into `article_tag` values (null,{$articleId},{$tag['id']})";
-                $b = $this->db->execute($sql);
-                if ($b === false) {
-                    $this->db->rollback();
-                    return false;
-                }
-            } else {
-                $sql = "update `article_tag` set `tag_id`=? where `id`=?";
-                $b = $this->db->execute($sql, [$tag['id'], $delIds[$key]]);
+        if(count($t1)>0){
+            foreach ($t1 as $val) {
+                $sql = "delete from article_tag where tag_id=?";
+                $b = $this->db->execute($sql, [$val]);
                 if ($b === false) {
                     $this->db->rollback();
                     return false;
                 }
             }
         }
+
+        if(count($t2)>0){
+            $values = '';
+            foreach ($t2 as $key => $val) {
+                if ($key > 0) {
+                    $values .= ',';
+                }
+                $values .= "(null,{$articleId},{$val})";
+            }
+            $sql = "insert into article_tag(id,article_id,tag_id) values {$values}";
+            $b = $this->db->execute($sql);
+            if ($b === false) {
+                $this->db->rollback();
+                return false;
+            }
+        }
+
 
         $this->db->commit();
 
@@ -259,20 +277,5 @@ class TagService extends BaseService
 
         $html = "<div class='tag'><label for='tag_{$name}' class='label label-{$type}'>{$name}</label><input type='checkbox' name='tags' id='tag_{$name}' value='{$name}'/></div>";
         return $html;
-    }
-
-    /**
-     * @param array $tagNames
-     * @param int $getId
-     */
-    public function updateArticleTags(array $tagNames, int $articleId)
-    {
-        $this->db->begin();
-
-        $delIds = $this->deleteArticleTagSoft($articleId);
-        if (false === $delIds) {
-            $this->db->rollback();
-            return false;
-        }
     }
 }

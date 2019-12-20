@@ -8,9 +8,7 @@ use app\libraries\Page;
 use app\models\domains\LoginForm;
 use app\models\domains\RegisterForm;
 use app\models\domains\WriteArticleForm;
-use app\models\User;
 use app\services\ArticleService;
-use app\services\TagService;
 use app\services\UserService;
 use app\validations\LoginValidation;
 use app\validations\RegisterValidation;
@@ -62,22 +60,22 @@ class UserController extends ControllerBase
     public function loginAction(LoginForm $loginForm)
     {
         if (!$this->request->isPost()) {
-            $this->flash->error('非法的请求方式');
-            $this->dispatcher->forward(['action' => 'loginHtml']);
+            $this->flashSession->error('非法的请求方式');
+            return $this->response->redirect('/user/login.html');
         }
-        if ($this->request->isPost()) {
-            if ($this->security->checkToken()) {
-                $this->flash->error('无效的token');
-                $this->dispatcher->forward(['action' => 'loginHtml']);
-            }
+
+        if ($this->security->checkToken()) {
+            $this->flashSession->error('无效的token');
+            return $this->response->redirect('/user/login.html');
         }
+
         $validation = new LoginValidation();
         $messages = $validation->validate($loginForm->toArray());
         if (count($messages)) {
             foreach ($messages as $message) {
-                echo $message->getMessage();
+                $this->flashSession->error($message->getMessage());
             }
-            $this->dispatcher->forward(['action' => 'loginHtml']);
+            return $this->response->redirect('/user/login.html');
         }
 
         /**
@@ -85,9 +83,10 @@ class UserController extends ControllerBase
          */
         $userService = $this->di->get('userService');
         $bool = $userService->login($loginForm);
+
         if ($bool === false) {
-            $this->flash->error('用户名或密码不正确');
-            $this->dispatcher->forward(['action' => 'loginHtml']);
+            $this->flashSession->error('用户名或密码不正确');
+            return $this->response->redirect('/user/login.html');
         }
 
         return $this->response->redirect('index/index');
@@ -100,13 +99,13 @@ class UserController extends ControllerBase
     public function registerAction(RegisterForm $registerForm)
     {
         if (!$this->request->isPost()) {
-            $this->flash->error('非法的请求方式');
-            $this->dispatcher->forward(['action' => 'loginHtml']);
+            $this->flashSession->error('非法的请求方式');
+            return $this->response->redirect('/user/register.html');
         }
         if ($this->request->isPost()) {
             if ($this->security->checkToken()) {
-                $this->flash->error('无效的token');
-                $this->dispatcher->forward(['action' => 'loginHtml']);
+                $this->flashSession->error('无效的token');
+                return $this->response->redirect('/user/register.html');
             }
         }
 
@@ -118,13 +117,16 @@ class UserController extends ControllerBase
         $validation = new RegisterValidation();
         $messages = $validation->validate($registerForm->toArray());
         if (count($messages)) {
-            $this->flash->error(serialize($messages));
-            $this->dispatcher->forward(['action' => 'registerHtml']);
+            foreach ($messages as $message){
+                $this->flashSession->error($message->getMessage());
+                return $this->response->redirect('/user/register.html');
+            }
+
         }
 
         if ($userService->register($registerForm)) {
-            $this->flash->error('注册失败');
-            $this->dispatcher->forward(['action' => 'registerHtml']);
+            $this->flashSession->error('注册失败');
+            return $this->response->redirect('/user/register.html');
         }
 
         return $this->response->redirect('index/index');
@@ -138,9 +140,17 @@ class UserController extends ControllerBase
 
     /**
      * 跳转到写作页面
+     * @throws Mismatch
      */
     public function toWriteAction()
     {
+        $articleId = $this->dispatcher->getParam('articleId', 'int!', 0);
+        $p = $this->dispatcher->getParam('p', 'int!', 1);
+        if ($articleId !== 0) {
+            $article = $this->articleService->getOne($articleId);
+            $this->view->setVar('article', $article);
+            $this->view->setVar('p', $p);
+        }
 
     }
 
@@ -150,11 +160,22 @@ class UserController extends ControllerBase
      */
     public function articleListAction()
     {
-        $p=$this->request->get('p','!int',1);
-        $page=new Page($p);
-        $user=$this->userService->getLoginedUser();
-        $page = $this->articleService->listOfUser($page,$user['id']);
+        $p = $this->dispatcher->getParam('p', 'int!', 1);
+        $drag = $this->dispatcher->getParam('drag', null, false);
+        $page = new Page($p);
+        $user = $this->userService->getLoginedUser();
+        if ($user === false) {
+            $this->response->redirect('/user/login.html');
+        }
+
+        if($drag){
+            $page = $this->articleService->listOfUser($page, $user['id'],1);
+        }else{
+            $page = $this->articleService->listOfUser($page, $user['id']);
+        }
+
         $this->view->setVar('page', $page);
+        $this->view->setVar('drag', $drag);
     }
 
     /**
@@ -171,10 +192,11 @@ class UserController extends ControllerBase
 
         if ($this->request->isPost()) {
             if ($this->security->checkToken()) {
+                $p=$this->request->getPost('p','int!',1);
                 $articleService = $this->di->get('articleService');
                 $b = $articleService->save($writeArticleForm);
-                if ($b == true) {
-                    return $this->response->redirect('/user/articleList');
+                if ($b === true) {
+                    return $this->response->redirect('/user/list-'.$p.'.html');
                 } else {
                     $this->flashSession->error("提交失败");
                 }
@@ -186,6 +208,41 @@ class UserController extends ControllerBase
         }
 
         return $this->response->redirect('/user.html');
+    }
+
+    public function deleteArticleAction(){
+        $articleId=$this->dispatcher->getParam('articleId', 'int!', 0);
+        $p=$this->dispatcher->getParam('p', 'int!', 1);
+
+        if($articleId!==0){
+            $b = $this->articleService->delteSoft($articleId);
+            if($b===false){
+                $this->flashSession->error("删除失败");
+            }
+
+            $this->response->redirect('/user/list-'.$p.'.html');
+        }
+    }
+
+    public function publicArticleAction(){
+        $articleId=$this->dispatcher->getParam('articleId', 'int!', 0);
+        $p=$this->dispatcher->getParam('p', 'int!', 1);
+
+        if($articleId!==0){
+            $b = $this->articleService->pub($articleId);
+            if($b===false){
+                $this->flashSession->error("发布失败");
+            }
+
+            $this->response->redirect('/user/drag-'.$p.'.html');
+        }
+    }
+
+    public function showArticleAction(){
+        $this->dispatcher->forward([
+            'controller'=>'index',
+            'action'=>'showArticle',
+        ]);
     }
 }
 

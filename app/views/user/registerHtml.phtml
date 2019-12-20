@@ -1,7 +1,19 @@
 <div class="register-box">
     <div class="register-title"><h1>用户注册</h1></div>
+    <?php
+    if ($this->flashSession->has('error')) {
+        $messages = $this->flashSession->getMessages('error');
+        foreach ($messages as $message) {
+            echo '<div class="alert alert-danger alert-dismissible errors" role="alert">';
+            echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+            echo $message;
+            echo '</div>';
+        }
+    }
+    ?>
     <div class="register-body">
         <form action="/user/register" method="post">
+            <div class="register-item"><input class="input-text" type="text" name="nickname" placeholder="昵称（选填）"/></div>
             <div class="register-item"><input class="input-text" type="text" name="account" placeholder="手机号或邮箱"/></div>
             <div class="register-item"><input class="input-text" type="password" name="password" placeholder="密码"></div>
             <div class="register-item"><input class="input-text" type="password" name="confirmPass" placeholder="确认密码"></div>

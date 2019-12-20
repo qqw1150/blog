@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\libraries\CryptUtil;
+use app\libraries\Page;
 use app\services\UserService;
 use app\services\ArticleService;
 use app\models\domains\WriteArticleForm;
@@ -19,52 +21,30 @@ class IndexController extends ControllerBase
         //加载静态资源
         $this->assets->addCss('assets/css/index.css' . $this->staticDebug());
         $this->assets->addJs('assets/js/index.js' . $this->staticDebug());
+
+        $p = $this->dispatcher->getParam('p', 'int!', 1);
+        $page = new Page($p);
+        $page = $this->articleService->list($page);
+        $this->view->setVar('page',$page);
     }
+    public function showArticleAction(){
+        $this->assets->addCss('assets/css/index.css' . $this->staticDebug());
+        $this->assets->addCss('assets/base/css/railscasts.min.css' . $this->staticDebug());
+        $this->assets->addJs('assets/js/index.js' . $this->staticDebug());
+        $this->assets->addJs('assets/plugs/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' . $this->staticDebug());
 
+        $articleId=CryptUtil::num_decrypt($this->dispatcher->getParam('articleId','string',''));
 
-    public function testAction()
-    {
-        $af = new WriteArticleForm();
-        $af->setTitle("java");
-        $af->setContent("hello java");
-        $af->setTags("java,go,css");
-
-        $articleService = $this->di->get('articleService');
-        $b = $articleService->save($af);
-        var_dump($b);
-    }
-
-    public function test2Action()
-    {
-        /**
-         * @var UserService $us
-         */
-        $us = $this->di->get('tagService');
-        $res=$us->getUserTags(1);
-        echo json_encode($res);
-    }
-
-
-    public function test3Action()
-    {
-        $s = microtime(true);
-        $af = new WriteArticleForm();
-//        $af->setId(7);
-        $af->setTitle("go");
-        $af->setContent("c++ go");
-        $af->setTags("html,java,ruby");
-
-        /**
-         * @var ArticleService $articleService
-         */
-        $articleService = $this->di->get('articleService');
-        try {
-            $b = $articleService->save($af);
-        } catch (Mismatch $e) {
+        if($articleId!==""){
+            $article = $this->articleService->getOne($articleId);
+            $article['content'] = $this->articleService->formatContent($article['content']);
+            $this->view->setVar('article',$article);
+        }else{
+            $this->flashSession->error("文章不存在");
+            $this->goBack();
         }
-        $e = microtime(true);
-        var_dump($e - $s);
-        var_dump($b);
     }
+
+
 }
 

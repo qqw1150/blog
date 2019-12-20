@@ -6,7 +6,7 @@ use app\validations\validators\PhoneValidator;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\Email as EmailValidator;
 
-class UserTag extends \Phalcon\Mvc\Model
+class UserTag extends Base
 {
 
     /**

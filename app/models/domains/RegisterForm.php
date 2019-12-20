@@ -8,6 +8,7 @@
 
 namespace app\models\domains;
 
+use app\libraries\CommonUtil;
 use app\services\UserService;
 
 /**
@@ -22,8 +23,26 @@ class RegisterForm extends Base
 {
     protected $account='';
     protected $password='';
+    protected $confirmPass='';
     protected $captcha='';
     protected $accountType;
+    protected $nickname='';
+
+    /**
+     * @return string
+     */
+    public function getNickname(): string
+    {
+        return $this->nickname;
+    }
+
+    /**
+     * @param string $nickname
+     */
+    public function setNickname(string $nickname): void
+    {
+        $this->nickname = $nickname;
+    }
 
     /**
      * @return string
@@ -93,6 +112,22 @@ class RegisterForm extends Base
         $this->accountType = $accountType;
     }
 
+    /**
+     * @return string
+     */
+    public function getConfirmPass(): string
+    {
+        return $this->confirmPass;
+    }
+
+    /**
+     * @param string $confirmPass
+     */
+    public function setConfirmPass(string $confirmPass): void
+    {
+        $this->confirmPass = $confirmPass;
+    }
+
     public function toArray()
     {
         return parent::_toArray(self::class);
@@ -101,8 +136,13 @@ class RegisterForm extends Base
 
     public function fillData($data)
     {
+        if(empty($data['nickname'])){
+            $data['nickname'] = CommonUtil::generateNickName();
+        }
         $this->setAccount($data['account']);
         $this->setPassword($data['password']);
+        $this->setConfirmPass($data['confirmPass']);
         $this->setCaptcha($data['captcha']);
+        $this->setNickname($data['nickname']);
     }
 }

@@ -4,27 +4,26 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Phalcon PHP Framework</title>
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo $this->url->get('img/favicon.ico') ?>"/>
     <link rel="stylesheet" type="text/css" href="/assets/base/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/assets/css/base.css"/>
-    <link rel="stylesheet" type="text/css" href="/assets/css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/base.css?v=1"/>
     <?php $this->assets->outputCss();?>
 </head>
 <body>
 <div class="header">
     <div class="container">
         <div class="logo col-md-3">
-            <!--                        <img class="left" src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=1022109268,3759531978&fm=26&gp=0.jpg"/>-->
-            <div class="right">ZyBlog</div>
+            <div class="right"><a href="/">zyBlog</a></div>
         </div>
 
         <?php if ($user = $this->userService->getLoginedUser()) { ?>
             <div class="col-md-3 col-md-offset-6">
                 <div class="user">
-                    <div class="pic"><img class="img-circle" src="<?php echo $user['photo'] ?>"/></div>
-                    <div class="name"><?php echo $user['account'] ?></div>
+
+                    <div class="pic"><a href="/user/articleList"><img class="img-circle" src="<?php echo $user['photo'] ?>"/></a></div>
+
+                    <div class="name"><?php echo $user['nickname'] ?></div>
+
                     <div class="opt">
                         <a href="/user/toWrite">创作</a>
                         <span class="ls"> | </span>

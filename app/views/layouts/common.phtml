@@ -1,17 +1,21 @@
 <div class="row body">
     <?php
         $controller=$this->dispatcher->getControllerName();
+        $action = $this->dispatcher->getActionName();
         $viewStr='layouts/'.$controller;
+        $subViewStr='sublayouts/'.$action;
         $params=$this->view->getParamsToView();
         if($this->view->exists($viewStr) && empty($params['noLayout'])){
     ?>
         <div class="left"><?php echo $this->getContent();?></div>
         <div class="right">
             <?php
-                $this->view->partial('layouts/'.$controller,$params);
+                $this->view->partial($viewStr,$params);
             ?>
         </div>
-    <?php }else{
+    <?php }else if($this->view->exists($subViewStr) && empty($params['noSubLayout'])){
+            $this->view->partial($subViewStr,$params);
+        }else{
         echo $this->getContent();
     }?>
 
