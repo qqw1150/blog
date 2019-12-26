@@ -38,7 +38,7 @@
                             </ul>
                             <div class="clear"></div>
                         </div>
-                        <div class="content"><?php echo (new \Phalcon\Filter())->sanitize($item['content'], 'striptags');?></div>
+                        <div class="content"><?php echo $item['short_content']?></div>
                         <div class="state"><?php echo $item['ctime']?></div>
                     </div>
                     <?php

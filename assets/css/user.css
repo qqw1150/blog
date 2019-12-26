@@ -277,7 +277,6 @@
 }
 
 .articleList-box .article a, .article a:hover {
-    color: #414142;
     text-decoration: none
 }
 .articleList-box .article .head{
@@ -318,6 +317,10 @@
     font-size: 14px;
     min-height: 20px;
     max-height: 80px
+}
+
+.articleList-box .article .content pre code ul{
+    list-style-type: decimal;
 }
 
 .articleList-box .article .state {

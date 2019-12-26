@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Tag;
 use app\services\ArticleService;
+use app\services\CommentService;
 use app\services\TagService;
 use app\services\UserService;
 use Phalcon\Mvc\Controller;
@@ -13,6 +14,7 @@ use Phalcon\Mvc\Controller;
  * @property UserService $userService
  * @property ArticleService $articleService
  * @property TagService $tagService
+ * @property CommentService $commentService
  * @property \Redis $redis
  * @package app\controllers
  */

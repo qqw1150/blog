@@ -54,12 +54,15 @@ $di->setShared(
                  */
                 $reflection = new ReflectionClass($controllerName);
                 $request = $reflection->newInstance()->request;
-
-                $formClass = 'app\models\domains\\' . ucfirst($actionName) . 'Form';
-                $reflection2 = new ReflectionClass($formClass);
-                $formInstance = $reflection2->newInstance();
-                $formInstance->fillData($request->get());
-                $dispatcher->setParams([$formInstance]);
+                $formName=$request->get('form','trim','');
+                
+                if($formName!==''){
+                    $formClass = 'app\models\domains\\' . ucfirst($formName) . 'Form';
+                    $reflection2 = new ReflectionClass($formClass);
+                    $formInstance = $reflection2->newInstance();
+                    $formInstance->fillData($request->get());
+                    $dispatcher->setParams([$formInstance]);
+                }
 
 //                if ($actionName === 'login') {
 //                    $loginForm = new LoginForm();
@@ -230,12 +233,12 @@ $di->set(
     }
 );
 
-$di->set('redis', function () use ($di) {
+$di->set('redis', function ($group='default') use ($di) {
     /**
      * @var \Phalcon\Config $config
      */
     $config = $di->get('config');
-    $conf = $config->redis;
+    $conf = $config->redis->$group;
     $redis = new \Redis();
     $redis->connect($conf['host'], $conf['port'], $conf['timeout']);
     $redis->auth($conf['password']);

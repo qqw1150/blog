@@ -1,5 +1,7 @@
 <div class="toWrite-box">
+    <div style="display: none" id="hiddenDom"></div>
     <form class="form-horizontal" id="mForm" action="/user/writeArticle" method="post">
+        <input type="hidden" name="form" value="article"/>
         <input type='hidden' name='<?php echo $this->security->getTokenKey() ?>' value='<?php echo $this->security->getToken() ?>'/>
         <input type="hidden" name="id" value="<?php echo !empty($article) ? $article['id'] : '' ?>"/>
         <input type="hidden" name="p" value="<?php echo !empty($p) ? $p : 1?>"/>
@@ -13,8 +15,7 @@
         <div class="form-group">
             <label for="content" class="col-md-1 control-label">内容</label>
             <div class="col-md-11">
-                <textarea class="form-control" id="editor"></textarea>
-                <textarea class="form-horizontal" name="content" id="content" style="display: none"></textarea>
+                <textarea class="form-control" name="content" id="content"></textarea>
             </div>
         </div>
         <div class="form-group">
@@ -78,12 +79,28 @@ function saveForm(val) {
         alert("标题不能为空");
     }
 
-    var data = CKEDITOR.instances.editor.getData();
+    var data = CKEDITOR.instances.content.getData();
     if (data === "") {
         alert("内容不能为空");
     }
-
-    content.value = data;
+    
+    $("#hiddenDom").html(data);
+    var codes=$("#hiddenDom pre code");
+    if(codes.length){
+        for(var i=0;i<codes.length;i++){
+            var iHtml='';
+            ss=$(codes[i]).html().split(/[\\n\\r]+/);
+            iHtml+="<ul>";
+            for(var k=0;k<ss.length;k++){
+                iHtml+="<li class=\"cItem\">"+ss[k]+"</li>";
+            }
+            iHtml+="</ul>";
+            $(codes[i]).html(iHtml);
+            $(codes[i]).addClass("m_code");
+        }
+    }
+    CKEDITOR.instances.content.setData($("#hiddenDom").html());
+    
 
     /*console.log(data);*/
     $("#mForm").submit();
@@ -106,14 +123,27 @@ function selectTags() {
 CODE
 );
 $this->assets->addInlineJs('
-CKEDITOR.replace("editor", {
+CKEDITOR.replace("content", {
 height: 600,
 removePlugins:"cloudservices,easyimage",
 });
 CKEDITOR.editorConfig = function (config) {
     config.removePlugins = "easyimage,cloudservices";
 };
-CKEDITOR.instances.editor.setData(`'.(!empty($article) ? $article['content'] : '').'`);
+var data=`'.(!empty($article) ? $article['content'] : '').'`;
+$("#hiddenDom").html(data);
+var codes=$("#hiddenDom pre code");
+for(var p=0;p<codes.length;p++){
+    var iHtml="";
+    var tt=$(codes[p]).find("ul li.cItem");
+    console.log(tt);
+    for(var q=0;q<tt.length;q++){
+        iHtml+=($(tt[q]).html()+"\n");
+    }
+    $(codes[p]).html(iHtml);
+}
+data = $("#hiddenDom").html();
+CKEDITOR.instances.content.setData(data);
 var tagChecks = $("#tag-pannel .modal-body .tag input");
 var tagNames = `'.(!empty($article) && !empty($article["tags"]) ? implode(",", $article["tags"]) : "").'`.split(",");
 if (tagNames.length>0) {

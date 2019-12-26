@@ -8,6 +8,8 @@
 
 namespace app\models\domains;
 
+use app\services\ArticleService;
+
 /**
  * Class ArticleForm
  * @property integer $id
@@ -16,7 +18,7 @@ namespace app\models\domains;
  * @property array $tags
  * @package app\models\domains
  */
-class WriteArticleForm extends Base
+class ArticleForm extends Base
 {
     protected $id;
     protected $title = '';
@@ -61,6 +63,7 @@ class WriteArticleForm extends Base
      */
     public function getContent()
     {
+
         return $this->content;
     }
 

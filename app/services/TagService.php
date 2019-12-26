@@ -160,7 +160,7 @@ class TagService extends BaseService
         $t1 = array_values(array_diff($srcIds, $distIds));
         $t2 = array_values(array_diff($distIds, $srcIds));
 
-        if(count($t1)>0){
+        if (count($t1) > 0) {
             foreach ($t1 as $val) {
                 $sql = "delete from article_tag where tag_id=?";
                 $b = $this->db->execute($sql, [$val]);
@@ -171,7 +171,7 @@ class TagService extends BaseService
             }
         }
 
-        if(count($t2)>0){
+        if (count($t2) > 0) {
             $values = '';
             foreach ($t2 as $key => $val) {
                 if ($key > 0) {
@@ -277,5 +277,45 @@ class TagService extends BaseService
 
         $html = "<div class='tag'><label for='tag_{$name}' class='label label-{$type}'>{$name}</label><input type='checkbox' name='tags' id='tag_{$name}' value='{$name}'/></div>";
         return $html;
+    }
+
+    public function getTagHtmlV2($name, $icon)
+    {
+        switch ($icon) {
+            case 1:
+                $type = 'primary';
+                break;
+            case 2:
+                $type = 'success';
+                break;
+            case 3:
+                $type = 'info';
+                break;
+            case 4:
+                $type = 'warning';
+                break;
+            case 5:
+                $type = 'danger';
+                break;
+            default:
+                $type = 'default';
+        }
+
+        $html = '<span class="label label-'.$type.'">'.$name.'</span>';
+        return $html;
+    }
+
+    public function listAll()
+    {
+        $sql = "select id,name,icon from tag";
+        $rs = $this->db->query($sql);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $tags = $rs->fetchAll();
+        if(!empty($tags)){
+            foreach ($tags as &$tag){
+                $tag['html']=$this->getTagHtmlV2($tag['name'],$tag['icon']);
+            }
+        }
+        return $tags;
     }
 }

@@ -1,15 +1,11 @@
-<div class="panel">
-    <div class="panel_title"></div>
-    <div class="panel_body">
-        <div class="panel_item item-red">Primary</div>
-        <div class="panel_item item-blue">java</div>
-        <div class="panel_item item-orange">java</div>
-        <div class="panel_item item-black">java</div>
-        <div class="panel_item item-green">java</div>
-        <div class="panel_item item-red">Primary</div>
-        <div class="panel_item item-blue">java</div>
-        <div class="panel_item item-orange">java</div>
-        <div class="panel_item item-black">java</div>
-        <div class="panel_item item-green">java</div>
+<div class="tag-box panel panel-default">
+    <div class="panel-body">
+        <?php
+        if(!empty($tags)){
+            foreach ($tags as $tag){
+                echo "<a href='/index/{$tag["id"]}/list.html' class='tag'>".$tag['html']."</a>";
+            }
+        }
+        ?>
     </div>
 </div>

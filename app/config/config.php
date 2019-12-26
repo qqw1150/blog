@@ -18,10 +18,12 @@ return new \Phalcon\Config([
         'charset'     => $secret['database']['charset'],
     ],
     'redis'=>[
-        'host'=>$secret['redis']['host'],
-        'port'=>$secret['redis']['port'],
-        'password'=>$secret['redis']['password'],
-        'timeout'=>$secret['redis']['timeout'],
+       'default'=>[
+           'host'=>$secret['redis']['host'],
+           'port'=>$secret['redis']['port'],
+           'password'=>$secret['redis']['password'],
+           'timeout'=>$secret['redis']['timeout'],
+       ]
     ],
     'application' => [
         'appDir'         => APP_PATH . '/',

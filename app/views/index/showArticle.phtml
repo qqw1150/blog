@@ -1,5 +1,5 @@
-<div class="showArticle-box">
-    <div class="article">
+<div class="showArticle-box panel panel-default">
+    <div class="article panel-body">
         <h1 class="title"><?php echo $article['title']?></h1>
         <div class="meta">
             <div class="item date"><?php echo $article['ctime']?></div>
@@ -9,10 +9,192 @@
         </div>
         <div class="tag">标签：<span class="glyphicon glyphicon-tags"></span><?php echo 'java、php、go'?></div>
         <div class="content">
-            <pre><code class="language-javascript hljs">// Vue 根实例new Vue({  data: {    foo: 1  },  computed: {    bar: function () { /* ... */ }  },  methods: {    baz: function () { /* ... */ }  }})</code></pre>
-
             <?php echo $article['content']?></div>
     </div>
 </div>
 
+<style>
+
+    .comment-box .title{
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    .comment-box p{
+        margin: 0;
+        padding: 0;
+    }
+
+    .comment-box .comment-list .comment{
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        border-bottom: 1px solid #cccbcb;
+        padding: 10px 0;
+    }
+    .comment-box .comment-list .comment .left{
+        width: 6%;
+        position: relative;
+    }
+    .comment-box .comment-list .comment .left img{
+        width: 100%;
+        display: block;
+        margin: auto;
+    }
+    .comment-box .comment-list .comment .right{
+        width: 94%;
+    }
+    .comment-box .comment-list .comment .right .c_title{
+        font-weight: bold;
+        font-size: 16px;
+    }
+    .comment-box .comment-list .comment .right .reply span{
+        color: #555555;
+    }
+    .comment-box .comment-list .comment .right .c_content{
+        margin-bottom: 5px;
+    }
+    .comment-box .comment-list .comment .right .c_content .ato{
+        color: #4183c4;
+    }
+</style>
+
+<div class="panel panel-default comment-box">
+    <div class="panel-body">
+        <div style="display: none" id="hiddenDom"></div>
+        <div class="title">相关评论(4)</div>
+        <div class="form">
+            <form id="mFrom" class="form" action="/index/add-comment.html" method="post">
+                <input type="hidden" name="form" value="comment"/>
+                <input type='hidden' id="token" name='<?php echo $this->security->getTokenKey() ?>' value='<?php echo $this->security->getToken() ?>'/>
+                <input type="hidden" id="articleId" name="articleId" value="<?php echo !empty($article) ? $article['id'] : '0' ?>"/>
+                <input type="hidden" id="userId" name="userId" value="<?php echo !empty($user) ? $user['id'] : '0' ?>"/>
+                <div class="form-group">
+                    <textarea id="content" name="content" class="form-control content"></textarea>
+                </div>
+                <div class="form-group">
+                    <button onclick="submitForm();" type="button" <?php echo empty($user) ? 'disabled' : ''?> class="btn btn-success">发 布</button>
+                    <p><?php echo empty($user) ? '登录后发表评论' : ''?></p>
+                </div>
+            </form>
+        </div>
+        <div class="comment-list" id="comment-list">
+            <?php
+            /**
+             * @var \app\libraries\Page $page
+             */
+            if ($page !== false && $page->getTotalItems() > 0) { ?>
+                <?php foreach ($page->getItems() as $comment) { ?>
+                    <div class="comment">
+                        <div class="left"><img src="<?php echo $comment['photo']?>"/></div>
+                        <div class="right">
+                            <div class="c_title"><?php echo $comment['nickname']?></div>
+                            <div class="c_content">
+                                <?php echo preg_replace("/@(.*?):/iu","<span class='ato'>@$1:</span>",$comment['content'])?>
+                            </div>
+                            <div class="reply"><span class="glyphicon glyphicon-share-alt"></span> <a href="javascript:void(0);" onclick="replyCemment('<?php echo $comment["nickname"]?>');">回复</a></div>
+                        </div>
+                    </div>
+                <?php } ?>
+            <?php } ?>
+        </div>
+    </div>
+</div>
+
+
+
 <?php $this->assets->addInlineJs("hljs.initHighlightingOnLoad();"); ?>
+<?php $this->assets->addJs('/assets/plugs/ckeditor/ckeditor.js');?>
+<?php
+$this->assets->addInlineJs('
+    CKEDITOR.replace("content", {
+        removePlugins:"cloudservices,easyimage",
+        toolbar : [
+            { name: "basicstyles", items: [ "Bold", "Italic", "Underline", "Strike", "Subscript", "Superscript" ] },
+            { name: "paragraph", items: [ "NumberedList", "BulletedList"] },
+            { name: "links", items: [ "Link"] },
+            { name: "insert", items: [ "EasyImageUpload", "CodeSnippet", "Table"] }
+        ]
+    });
+    
+    
+    function submitForm() {
+        var content = CKEDITOR.instances.content.getData();
+        if (content === "") {
+            alert("内容不能为空");
+        }
+
+        $("#hiddenDom").html(content);
+        var codes=$("#hiddenDom pre code");
+        if(codes.length){
+            for(var i=0;i<codes.length;i++){
+                var iHtml=\'\';
+                ss=$(codes[i]).html().split(/[\\n\\r]+/);
+                iHtml+="<ul>";
+                for(var k=0;k<ss.length;k++){
+                    iHtml+="<li class=\"cItem\">"+ss[k]+"</li>";
+                }
+                iHtml+="</ul>";
+                $(codes[i]).html(iHtml);
+                $(codes[i]).addClass("m_code");
+            }
+        }
+        
+        content = $("#hiddenDom").html();
+
+        var userId = document.getElementById("userId").value;
+        var articleId = document.getElementById("articleId").value;
+        var token = document.getElementById("token");
+
+        var data = {
+            "content":content,
+            "userId":userId,
+            "articleId":articleId,
+            "form":"comment"
+        };
+        data[token.name]=token.value;
+
+        $.ajax({
+            url:"/index/add-comment.html",
+            data:data,
+            dataType:"JSON",
+            type:"POST",
+            success:function (data) {
+                console.log(data);
+                if(data.error===0){
+                    token.name=data.data.token.key;
+                    token.value=data.data.token.value;
+                    var comment = data.data.comment;
+                    var html="";
+                    html+="<div class=\"comment\">";
+                    html+=`<div class="left"><img src="`+comment.photo+`"/></div>`;
+                    html+="<div class=\"right\">";
+                    html+="<div class=\"c_title\">"+comment.nickname+"</div>";
+                    html+="<div class=\"c_content\">";
+                    html+=comment.content;
+                    html+="</div>"; 
+                    html+=`<div class="reply"><span class="glyphicon glyphicon-share-alt"></span> <a href="javascript:void(0);" onclick="replyCemment(`+comment.nickname+`);">回复</a></div>`;
+                     
+                    $("#comment-list").prepend(html);
+                }
+            },
+            error:function (e) {
+                console.log(e);
+            }
+        });
+    }
+    
+    function replyCemment($ato) {
+        var data = CKEDITOR.instances.content.getData();
+        console.log(data);
+        data= "@"+$ato+":"+ data.trim();
+        console.log(data);
+        CKEDITOR.instances.content.setData(data);
+    }
+');
+?>
+
+<script>
+
+</script>
+

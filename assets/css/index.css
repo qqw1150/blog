@@ -76,7 +76,6 @@
 }
 
 .articleList-box .article a, .article a:hover {
-    color: #414142;
     text-decoration: none
 }
 .articleList-box .article .head{
@@ -103,6 +102,11 @@
     height: 30px;
     line-height: 30px;
     margin: 0 5px;
+}
+
+.articleList-box .article .head .show .item span{
+    font-weight: bold;
+    color: #585454;
 }
 
 .articleList-box .article .content {
@@ -244,4 +248,15 @@
 /*}*/
 .showArticle-box .article .content{
     margin: 10px 0;
+}
+
+
+/******************* 主页标签栏 *********************/
+.tag-box .panel-body{
+    padding: 5px;
+}
+.tag-box .tag{
+    display: inline-block;
+    margin: 3px 3px;
+    text-decoration: none;
 }

@@ -7,7 +7,7 @@ use app\libraries\Captcha;
 use app\libraries\Page;
 use app\models\domains\LoginForm;
 use app\models\domains\RegisterForm;
-use app\models\domains\WriteArticleForm;
+use app\models\domains\ArticleForm;
 use app\services\ArticleService;
 use app\services\UserService;
 use app\validations\LoginValidation;
@@ -180,7 +180,7 @@ class UserController extends ControllerBase
 
     /**
      * 写文章
-     * @param WriteArticleForm $writeArticleForm
+     * @param ArticleForm $writeArticleForm
      * @throws NotLoginException
      * @throws Mismatch
      */

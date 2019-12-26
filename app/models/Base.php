@@ -10,6 +10,7 @@ namespace app\models;
 
 
 use Phalcon\Mvc\Model;
+use ReflectionClass;
 
 abstract class Base extends Model
 {
@@ -33,5 +34,17 @@ abstract class Base extends Model
             }
         }
         return $obj;
+    }
+
+    /**
+     * @throws \ReflectionException
+     */
+    public static function getModelProNames($classname){
+        $class = new ReflectionClass($classname);
+        $properties = $class->getProperties();
+        foreach ($properties as $property) {
+            $pros[] = $property->getName();
+        }
+        return $pros;
     }
 }

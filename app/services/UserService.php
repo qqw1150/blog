@@ -42,13 +42,13 @@ class UserService extends BaseService
             $accountWhere = 'email=? and password=?';
         }
 
-        $sql="select id,email,phone,photo,nickname from user where {$accountWhere}";
-        $rs=$this->db->query($sql,[$loginForm->getAccount(), $loginForm->getPassword()]);
+        $sql = "select id,email,phone,photo,nickname from user where {$accountWhere}";
+        $rs = $this->db->query($sql, [$loginForm->getAccount(), $loginForm->getPassword()]);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
-        $user=$rs->fetchArray();
+        $user = $rs->fetchArray();
         $userObj = User::toObj($user);
 
-        if(empty($userObj)){
+        if (empty($userObj)) {
             return false;
         }
 
@@ -196,8 +196,8 @@ class UserService extends BaseService
         $user->setToken($token);
         $user->setTimeout($expire);
 
-        $sql="update user set token=?,timeout=?,identifier=? where id=?";
-        $b = $this->db->execute($sql,[$user->getToken(),$user->getTimeout(),$user->getIdentifier(),$user->getId()]);
+        $sql = "update user set token=?,timeout=?,identifier=? where id=?";
+        $b = $this->db->execute($sql, [$user->getToken(), $user->getTimeout(), $user->getIdentifier(), $user->getId()]);
         if ($b === false) {
             return false;
         }
@@ -235,10 +235,10 @@ class UserService extends BaseService
             $identifier = $auth['identifier'];
             $token = $auth['token'];
 
-            $sql="select * from user where identifier=?";
-            $rs=$this->db->query($sql,[$identifier]);
+            $sql = "select * from user where identifier=?";
+            $rs = $this->db->query($sql, [$identifier]);
             $rs->setFetchMode(\PDO::FETCH_ASSOC);
-            $user=$rs->fetchArray();
+            $user = $rs->fetchArray();
 
             if (empty($user)) {
                 //不存在token身份
@@ -277,14 +277,13 @@ class UserService extends BaseService
 
         $user['account'] = $account;
         $user['accountType'] = $accountType;
-        $tagService=$this->di->get('tagService');
+        $tagService = $this->di->get('tagService');
         $user['tags'] = $tagService->getUserTags($user['id']);
-        foreach ($user['tags'] as &$tag){
-            $tag['html']=$tagService->getTagHtml($tag['name'],intval($tag['icon']));
+        $user['photo'] = self::getPhoto($user['photo']);
+        foreach ($user['tags'] as &$tag) {
+            $tag['html'] = $tagService->getTagHtml($tag['name'], intval($tag['icon']));
         }
-        if (empty($user['photo'])) {
-            $user['photo'] = STATIC_URL . '/image/default_user.jpg';
-        }
+
 
         unset($user['token']);
         unset($user['password']);
@@ -322,4 +321,17 @@ class UserService extends BaseService
         $cookies->get('auth')->delete();
     }
 
+    /**
+     * 获取用户图片
+     * @param string $photo
+     * @return string
+     */
+    public static function getPhoto(string $photo)
+    {
+        if (empty($photo)) {
+            return STATIC_URL . '/image/default_user.jpg';
+        } else {
+            return STATIC_URL . '/image/' . $photo;
+        }
+    }
 }

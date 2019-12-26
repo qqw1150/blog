@@ -8,6 +8,7 @@ define('BASE_PATH', __DIR__);
 define('APP_PATH', BASE_PATH . '/app');
 define('ASSETS_PATH', BASE_PATH . '/assets');
 
+//require __DIR__.'/vendor/autoload.php';
 include APP_PATH.'/config/constant.php';
 
 try {

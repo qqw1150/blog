@@ -11,15 +11,15 @@ namespace app\services;
 use app\exceptions\NotLoginException;
 use app\libraries\CryptUtil;
 use app\libraries\Page;
-use app\models\Article;
-use app\models\domains\WriteArticleForm;
+use app\models\domains\ArticleForm;
 use Phalcon\Db\Adapter\Pdo\Mysql;
+use Sunra\PhpSimple\HtmlDomParser;
 
 class ArticleService extends BaseService
 {
     /**
      * 保存文章（创建或修改）
-     * @param WriteArticleForm $articleForm
+     * @param ArticleForm $articleForm
      * @return bool
      * @throws NotLoginException
      * @throws \Phalcon\Crypt\Mismatch
@@ -106,6 +106,8 @@ class ArticleService extends BaseService
         $articles = $rs->fetchAll();
         foreach ($articles as &$article) {
             $article['encrypt_id'] = CryptUtil::num_encrypt($article['id']);
+            $article['short_content'] = mb_strlen($article['content']) > 350 ? mb_substr($article['content'], 0, 350) : $article['content'];
+            $article['short_content'] = (new \Phalcon\Filter())->sanitize($article['short_content'], 'striptags');
         }
 
         $sql = "select count(id) from blog.article where user_id=? and del=0 and status={$status}";
@@ -229,6 +231,9 @@ class ArticleService extends BaseService
         $articles = $rs->fetchAll();
         foreach ($articles as &$article) {
             $article['encrypt_id'] = CryptUtil::num_encrypt($article['id']);
+            $article['short_content'] = mb_strlen($article['content']) > 350 ? mb_substr($article['content'], 0, 350) : $article['content'];
+            $article['short_content'] = (new \Phalcon\Filter())->sanitize($article['short_content'], 'striptags');
+            $articleIds[] = $article['id'];
         }
 
         $page->setItems($articles);
@@ -292,36 +297,38 @@ class ArticleService extends BaseService
     }
 
     /**
-     * 格式化处理文章类容
-     * @param string $content
-     * @return string
+     * 根据标签列出文章
+     * @param int $tagId
+     * @param Page $page
+     * @return Page
      */
-    public function formatContent($content){
-            echo $content;
+    public function listByTag(int $tagId, Page $page)
+    {
+        $index = $page->getIndex();
+        $rows = $page->getPageSize();
+        $sql = "select 
+a.id,a.title,a.content,a.ctime,a.user_id,a.status
+ from article a left join article_tag art on a.id=art.article_id
+where art.tag_id=? and a.del=0 and a.status=2 order by a.id desc limit {$index},{$rows}";
+        $rs = $this->db->query($sql, [$tagId]);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $articles = $rs->fetchAll();
+        foreach ($articles as &$article) {
+            $article['encrypt_id'] = CryptUtil::num_encrypt($article['id']);
+            $article['short_content'] = mb_strlen($article['content']) > 350 ? mb_substr($article['content'], 0, 350) : $article['content'];
+            $article['short_content'] = (new \Phalcon\Filter())->sanitize($article['short_content'], 'striptags');
+        }
+        $page->setItems($articles);
 
-//exit;
-//
-//        if(preg_match_all("@<code[\s\S\t]*?(.*?)>(.*?)</code>@i",$content,$m)){
-//            echo "<pre>";
-//            print_r($m);exit;
-//            $mContent=$m[1];
-//            $c='<code><ol><li>';
-//            for ($i=0;$i<mb_strlen($mContent);$i++){
-//                if($mContent[$i]=="\n"){
-//                    $c.="</li><li>";
-//                }
-//                $c.=$mContent[$i];
-//            }
-//            $c.='</ol></code>';
-//
-//            $s=stripos($content,'<pre>')+5;
-//            $e=stripos($content,'</pre>');
-//            $preContent=substr($content,0,$s);
-//            $lastContent=substr($content,$e);
-//            $content=$preContent.$c.$lastContent;
-//
-//        }
-        return $content;
+        $sql = "select count(a.id)
+ from article a left join article_tag art on a.id=art.article_id
+where art.tag_id=? and a.del=0 and a.status=2";
+        $rs = $this->db->query($sql, [$tagId]);
+        $rs->setFetchMode(\PDO::FETCH_NUM);
+        $totalRes = $rs->fetchArray();
+        $page->setTotalItems($totalRes[0]);
+
+        return $page;
     }
 
 }
