@@ -260,3 +260,64 @@
     margin: 3px 3px;
     text-decoration: none;
 }
+
+
+/*********** 文章详情页评论 ****************/
+.comment-box .title{
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.comment-box p{
+    margin: 0;
+    padding: 0;
+}
+
+.comment-box .comment-list .comment{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    border-bottom: 1px solid #cccbcb;
+    padding: 10px 0;
+}
+.comment-box .comment-list .comment .left{
+    width: 6%;
+    position: relative;
+}
+.comment-box .comment-list .comment .left img{
+    width: 100%;
+    display: block;
+    margin: auto;
+}
+.comment-box .comment-list .comment .right{
+    width: 94%;
+}
+.comment-box .comment-list .comment .right .c_title{
+    font-weight: bold;
+    font-size: 16px;
+}
+.comment-box .comment-list .comment .right .reply span{
+    color: #555555;
+}
+.comment-box .comment-list .comment .right .c_content{
+    margin-bottom: 5px;
+}
+.comment-box .comment-list .comment .right .c_content .ato{
+    color: #4183c4;
+}
+
+/********* 文章底部分享点赞操作栏 **************/
+.showArticle-box .article .options{
+    position: relative;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #cccccc;
+}
+.showArticle-box .article .options .item{
+    float: right;
+}
+
+.showArticle-box .article .options .item .tip{
+    text-align: center;
+    color: red;
+}

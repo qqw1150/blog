@@ -98,7 +98,7 @@ class IndexController extends ControllerBase
                 $data['content'] = $commentForm->getContent();
                 $data['article_id'] = $commentForm->getArticleId();
                 $comment = $this->commentService->add($data);
-                $comment['content'] = preg_replace("/@(.*?):/iu","<span class='ato'>@$1:</span>",$comment['content']);
+                $comment['content'] = preg_replace("/@(.*?):/iu", "<span class='ato'>@$1:</span>", $comment['content']);
                 if ($comment !== false) {
                     return json_encode(['error' => 0, 'msg' => 'success', 'data' => [
                         'token' => [
@@ -116,6 +116,28 @@ class IndexController extends ControllerBase
         } else {
             return json_encode(['error' => 1, 'msg' => '非法提交']);
         }
+    }
+
+    public function starAction()
+    {
+        if ($this->request->isGet()) {
+            $articleId = $this->request->get('articleId', 'int!', 0);
+            $userId = $this->request->get('userId', 'int!', 0);
+            if ($articleId !== 0 && $userId !== 0) {
+                try {
+                    $b = $this->articleService->star($userId, $articleId);
+                    if ($b !== false) {
+                        return json_encode(array('error' => 0, 'msg' => 'SUCCESS'));
+                    }else{
+                        return json_encode(array('error' => 1, 'msg' => '重复点赞'));
+                    }
+                } catch (\Exception $e) {
+                }
+
+            }
+        }
+
+        return json_encode(array('error' => 1, 'msg' => '点赞失败'));
     }
 }
 

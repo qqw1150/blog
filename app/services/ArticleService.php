@@ -125,12 +125,18 @@ class ArticleService extends BaseService
      * @param bool $lazy
      * @return array
      */
-    public function getOne($aritcleId, $lazy = false)
+    public function getOne($articleId, $lazy = false)
     {
         $sql = "select a.id,a.title,a.content,a.user_id,a.ctime,a.status from article a left join user u on u.id=a.user_id where a.id=? and a.del=0";
-        $rs = $this->db->query($sql, [$aritcleId]);
+        $rs = $this->db->query($sql, [$articleId]);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
         $article = $rs->fetchArray();
+
+        $sql="select count(id) from star where article_id=?";
+        $rs=$this->db->query($sql, [$articleId]);
+        $rs->setFetchMode(\PDO::FETCH_NUM);
+        $star=$rs->fetchArray();
+        $article['star']=$star[0];
 
         if ($lazy === false && !empty($article)) {
             $sql = "select t.name from article_tag art left join tag t on art.tag_id=t.id where art.article_id=? and art.del=0";
@@ -329,6 +335,24 @@ where art.tag_id=? and a.del=0 and a.status=2";
         $page->setTotalItems($totalRes[0]);
 
         return $page;
+    }
+
+    public function star($userId, $articleId)
+    {
+        $sql = "select id from star where user_id=? and article_id=?";
+        $rs = $this->db->query($sql, [$userId, $articleId]);
+        $count = $rs->numRows();
+        if ($count > 0) {
+            return false;
+        }
+
+        $sql = "insert into star(id,user_id,article_id) values (null,?,?)";
+        $b = $this->db->execute($sql, [$userId, $articleId]);
+        if($b === false){
+            throw new \Exception('插入失败');
+        }
+
+        return true;
     }
 
 }

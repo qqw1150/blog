@@ -5,59 +5,21 @@
             <div class="item date"><?php echo $article['ctime']?></div>
             <div class="item author"><span class="glyphicon glyphicon-user"></span>李四</div>
             <div class="item watch"><span class="glyphicon glyphicon-eye-open"></span>2</div>
-            <div class="item remark"><span class="glyphicon glyphicon-comment"></span>1</div>
+            <div class="item remark"><span class="glyphicon glyphicon-star-empty"></span><span class="val"><?php echo $article['star']?></span></div>
         </div>
         <div class="tag">标签：<span class="glyphicon glyphicon-tags"></span><?php echo 'java、php、go'?></div>
-        <div class="content">
-            <?php echo $article['content']?></div>
+        <div class="content"><?php echo $article['content']?></div>
+
+        <div class="options">
+            <div class="item star">
+                <button onclick="star(<?php echo !empty($user) ? $user['id'] : 0?>,<?php echo $article['id']?>);" class="btn btn-primary" type="button"><span class="glyphicon glyphicon-thumbs-up"></span> 点赞</button>
+                <div class="tip"></div>
+            </div>
+
+            <div class="clear"></div>
+        </div>
     </div>
 </div>
-
-<style>
-
-    .comment-box .title{
-        font-size: 18px;
-        font-weight: bold;
-        margin: 10px 0;
-    }
-    .comment-box p{
-        margin: 0;
-        padding: 0;
-    }
-
-    .comment-box .comment-list .comment{
-        display: flex;
-        flex-direction: row;
-        position: relative;
-        border-bottom: 1px solid #cccbcb;
-        padding: 10px 0;
-    }
-    .comment-box .comment-list .comment .left{
-        width: 6%;
-        position: relative;
-    }
-    .comment-box .comment-list .comment .left img{
-        width: 100%;
-        display: block;
-        margin: auto;
-    }
-    .comment-box .comment-list .comment .right{
-        width: 94%;
-    }
-    .comment-box .comment-list .comment .right .c_title{
-        font-weight: bold;
-        font-size: 16px;
-    }
-    .comment-box .comment-list .comment .right .reply span{
-        color: #555555;
-    }
-    .comment-box .comment-list .comment .right .c_content{
-        margin-bottom: 5px;
-    }
-    .comment-box .comment-list .comment .right .c_content .ato{
-        color: #4183c4;
-    }
-</style>
 
 <div class="panel panel-default comment-box">
     <div class="panel-body">
@@ -73,7 +35,7 @@
                     <textarea id="content" name="content" class="form-control content"></textarea>
                 </div>
                 <div class="form-group">
-                    <button onclick="submitForm();" type="button" <?php echo empty($user) ? 'disabled' : ''?> class="btn btn-success">发 布</button>
+                    <button onclick="submitForm();" type="button" <?php echo empty($user) ? 'disabled' : ''?> class="btn btn-success">提交</button>
                     <p><?php echo empty($user) ? '登录后发表评论' : ''?></p>
                 </div>
             </form>
@@ -173,7 +135,7 @@ $this->assets->addInlineJs('
                     html+="<div class=\"c_content\">";
                     html+=comment.content;
                     html+="</div>"; 
-                    html+=`<div class="reply"><span class="glyphicon glyphicon-share-alt"></span> <a href="javascript:void(0);" onclick="replyCemment(`+comment.nickname+`);">回复</a></div>`;
+                    html+=`<div class="reply"><span class="glyphicon glyphicon-share-alt"></span> <a href="javascript:void(0);" onclick="replyCemment(\"`+comment.nickname+`\");">回复</a></div>`;
                      
                     $("#comment-list").prepend(html);
                 }
@@ -191,10 +153,39 @@ $this->assets->addInlineJs('
         console.log(data);
         CKEDITOR.instances.content.setData(data);
     }
+    
+    function star($userId,$articleId) {
+        if($userId==0){
+            $(".star .tip").empty();
+            $(".star .tip").append(`先<a href="/user/login.html">登录</a>`);
+            return false;
+        }
+    
+        $.ajax({
+            url:"/index/star",
+            type:"GET",
+            data:{"userId":$userId,"articleId":$articleId},
+            dataType:"JSON",
+            success:function (data) {
+                if(data.error==0){
+                    $(".star .tip").empty();
+                    $(".star .tip").append("点赞成功");
+                    var star = $(".showArticle-box .article .meta .remark .val").text();
+                    $(".showArticle-box .article .meta .remark .val").text(parseInt(star)+1);
+                }else{
+                    $(".star .tip").empty();
+                    $(".star .tip").append(data.msg);
+                }
+            },
+            error:function (e) {
+                console.log("点赞失败",e.responseText);
+            }
+        })
+    }
+    
 ');
 ?>
 
 <script>
 
 </script>
-
