@@ -3,20 +3,28 @@
  * @var \Phalcon\Mvc\Router $router
  * @var \Phalcon\Di $di ;
  */
-$router = $di->getRouter();
+$router = $di->get('router');
 
 // Define your routes here
 
-##################### 首页路由 #####################
-$index = new \Phalcon\Mvc\Router\Group(['controller' => 'index']);
-$index->setPrefix('/index');
-$index->add('/list.html', ['action' => 'index'], ['GET']);
-$index->add('/list-([0-9]+).html', ['action' => 'index', 'p' => 1], ['GET']);
-$index->add('/([0-9]+)/list.html', ['action' => 'listByTag', 'tagId' => 1], ['GET']);
-$index->add('/([0-9]+)/list-([0-9]+).html', ['action' => 'listByTag', 'tagId' => 1, 'p' => 2], ['GET']);
-$index->add('/article-(.*?).html', ['action' => 'showArticle', 'articleId' => 1], ['GET']);
-$index->add('/add-comment.html', ['action' => 'writeComment'], ['POST']);
-$router->mount($index);
+
+
+##################### 普通路由 #####################
+$router->add('/blog.html', ['action' => 'blog'], ['GET']);
+$router->add('/book.html', ['action' => 'blog'], ['GET']);
+$router->add('/tool.html', ['action' => 'blog'], ['GET']);
+
+##################### 博客路由 #####################
+$blog = new \Phalcon\Mvc\Router\Group(['controller' => 'blog']);
+$blog->setPrefix('/blog');
+$blog->add('/list.html', ['action' => 'index'], ['GET']);
+$blog->add('/list-([0-9]+).html', ['action' => 'index', 'p' => 1], ['GET']);
+$blog->add('/([0-9]+)/list.html', ['action' => 'listByTag', 'tagId' => 1], ['GET']);
+$blog->add('/([0-9]+)/list-([0-9]+).html', ['action' => 'listByTag', 'tagId' => 1, 'p' => 2], ['GET']);
+$blog->add('/article-(.*?).html', ['action' => 'showArticle', 'articleId' => 1], ['GET']);
+$blog->add('/add-comment.html', ['action' => 'writeComment'], ['POST']);
+$blog->add('/comment/([0-9]+)/list.html', ['action' => 'getCommentsArticle', 'articleId' => 1], ['GET']);
+$router->mount($blog);
 
 ##################### 用户路由 #####################
 $router->add("/user(.html)?", [

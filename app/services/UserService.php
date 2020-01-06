@@ -23,10 +23,6 @@ use Phalcon\Validation;
 class UserService extends BaseService
 {
 
-    /**
-     * @return bool|array
-     */
-
 
     /**
      * 登录

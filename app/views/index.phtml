@@ -6,42 +6,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Phalcon PHP Framework</title>
     <link rel="stylesheet" type="text/css" href="/assets/base/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/assets/css/base.css?v=1"/>
+    <link rel="stylesheet" type="text/css" href="/assets/css/base.css?v=8"/>
     <?php $this->assets->outputCss();?>
+    <style>
+        .header .navbar-default .links>.active>a, .navbar-default .links>.active>a:focus, .navbar-default .links>.active>a:hover{
+            background: none;
+        }
+        .header .navbar-default .links>.open>a, .navbar-default .links>.open>a:focus, .navbar-default .links>.open>a:hover{
+            background: none;
+            color: whitesmoke;
+            background-color: #0aab9c;
+        }
+        .header .navbar-default{
+            background: none;
+            border: none;
+        }
+        .header .navbar{
+            margin: 0;
+        }
+        .header{
+            height: auto;
+        }
+        .header .navbar .navbar-nav{
+            margin-left: 20px;
+        }
+        .header .navbar-default .navbar-nav>li>a{
+            color: whitesmoke;
+            font-size: 16px;
+            line-height: 30px;
+        }
+        .header .navbar-default .navbar-nav>li>a:hover{
+            color: whitesmoke;
+            background-color: #0aab9c;
+        }
+        .header .navbar-form{
+            margin-top: 13px;
+        }
+        .header .navbar-header{
+            width: auto;
+        }
+        .header .navbar-header .navbar-brand{
+            height: 60px;
+            line-height: 60px;
+            padding: 0;
+        }
+        .header .navbar-header a{
+            color: #ff9800;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .header .search .input-group{
+            display: flex;
+        }
+        .header .search select.input-group-addon{
+            padding: 0 12px;
+            border: none;
+        }
+        .header .search select.input-group-addon:focus{
+            border: none;
+            padding: 0 12px;
+        }
+        .header .uinfo{
+            position: relative;
+            display: flex;
+            float: none;
+        }
+        .header .uinfo .photo{
+            display: block;
+            width: 40px;
+            height: 40px;
+            border-radius: 100%;
+            margin-top: 10px;
+        }
+        .header .navbar-default .navbar-nav .uinfo .nickname:hover{
+            background:none;
+        }
+        .navbar-default .navbar-nav>.open>.nickname, .navbar-default .navbar-nav>.open>.nickname:focus, .navbar-default .navbar-nav>.open>.nickname:hover{
+            background:none;
+            color: whitesmoke;
+        }
+
+    </style>
 </head>
 <body>
+
+
+
+
 <div class="header">
     <div class="container">
-        <div class="logo col-md-3">
-            <div class="right"><a href="/">zyBlog</a></div>
-        </div>
+        <nav class="navbar navbar-default">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <div class="navbar-brand"><a href="/">525log</a></div>
+            </div>
 
-        <?php if ($user = $this->userService->getLoginedUser()) { ?>
-            <div class="col-md-3 col-md-offset-6">
-                <div class="user">
-
-                    <div class="pic"><a href="/user/articleList"><img class="img-circle" src="<?php echo $user['photo'] ?>"/></a></div>
-
-                    <div class="name"><?php echo $user['nickname'] ?></div>
-
-                    <div class="opt">
-                        <a href="/user/toWrite">创作</a>
-                        <span class="ls"> | </span>
-                        <a href="/user/logout">退出</a>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="links nav navbar-nav">
+                    <li><a href="/blog.html">博客</a></li>
+                    <li><a href="/book.html">电子书</a></li>
+                    <li><a href="/tool.html">工具</a></li>
+                </ul>
+                <form action="/index/search" method="get" class="search navbar-form navbar-left">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <select class="input-group-addon" name="type" >
+                                <option value="1" selected>博客</option>
+                                <option value="2">图书</option>
+                            </select>
+                            <input type="text" name="keyword" value="<?php echo !empty($keyword) ? $keyword : ''?>" class="form-control" placeholder="Search">
+                        </div>
                     </div>
-                </div>
-            </div>
-        <?php } else { ?>
-            <div class="col-md-2 col-md-offset-7 user-login">
-                <a href="/user/loginHtml">登录</a>
-                <a href="/user/registerHtml">注册</a>
-            </div>
-        <?php } ?>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+
+                <?php if ($user = $this->userService->getLoginedUser()) { ?>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="uinfo dropdown">
+                            <img class="photo" src="<?php echo $user['photo']?>"/>
+                            <a href="#" class="nickname dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                               <?php echo $user['nickname']?> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/user/write.html">创作</a></li>
+                                <li><a href="/user/list.html">我的</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/user/logout">退出</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                <?php } else { ?>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/user/login.html">登录</a></li>
+                        <li><a href="/user/register.html">注册</a></li>
+                    </ul>
+                <?php } ?>
+            </div><!-- /.navbar-collapse -->
+        </nav>
     </div>
 </div>
 
 
-<div class="container">
+<div class="container body-box">
     <?php echo $this->getContent(); ?>
 </div>
 

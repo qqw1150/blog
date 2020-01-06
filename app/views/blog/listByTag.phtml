@@ -13,6 +13,11 @@
                         <div class="head">
                             <h1 class="title"><a href="/blog/article-<?php echo rawurlencode($item['encrypt_id'])?>.html"><?php echo $item['title']?></a></h1>
                             <ul class="show">
+                                <?php
+                                if(!empty($curTag)){
+                                    echo '<li class="item"><span>标签：</span>'.$curTag['name'].'</li>';
+                                }
+                                ?>
                                 <li class="item"><span>评论数：</span><?php echo $item['comment_num']?></li>
                                 <li class="item"><span>阅读数：</span><?php echo $item['look_num']?></li>
                             </ul>
@@ -29,11 +34,11 @@
 
 
         <div class="pager">
-            <a href="/blog/<?php echo !empty($curTag)?>list.html" class="first item">首页</a>
-            <a href="/blog/list-<?php echo $page->getBefore()?>.html" class="prev item">上一页</a>
+            <a href="/blog/<?php echo $curTag['id']?>/list.html" class="first item">首页</a>
+            <a href="/blog/<?php echo $curTag['id']?>/list-<?php echo $page->getBefore()?>.html" class="prev item">上一页</a>
             <div class="cur item"><?php echo $page->getCurrent()?>/<?php echo $page->getTotalPages()?></div>
-            <a href="/blog/list-<?php echo $page->getNext()?>.html" class="next item">下一页</a>
-            <a href="/blog/list-<?php echo $page->getTotalPages()?>.html" class="last item">尾页</a>
+            <a href="/blog/<?php echo $curTag['id']?>/list-<?php echo $page->getNext()?>.html" class="next item">下一页</a>
+            <a href="/blog/<?php echo $curTag['id']?>/list-<?php echo $page->getTotalPages()?>.html" class="last item">尾页</a>
         </div>
     <?php }else {?>
         <div class="nobody">没有任何文章</div>

@@ -49,6 +49,13 @@ class CommentService extends BaseService
                 return false;
             }
 
+            $sql="update article set comment_num=comment_num+1 where id = ?";
+            $b = $this->db->execute($sql,[$data['article_id']]);
+            if($b===false){
+                $this->db->rollback();
+                return false;
+            }
+
             $id = $this->db->lastInsertId();
             $comment = $this->getOne($id);
             return $comment;

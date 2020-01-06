@@ -119,4 +119,25 @@ class Page
     {
         return ($this->current - 1) * $this->pageSize;
     }
+
+    /**
+     * @param int $pageSize
+     */
+    public function setPageSize(int $pageSize): void
+    {
+        $this->pageSize = $pageSize;
+    }
+
+    public function toArray()
+    {
+        return array(
+            'items' => $this->getItems(),
+            'totalItems' => $this->getTotalItems(),
+            'totalPage' => $this->getTotalPages(),
+            'pageSize' => $this->getPageSize(),
+            'current' => $this->getCurrent(),
+            'next' => $this->getNext(),
+            'before' => $this->getBefore()
+        );
+    }
 }

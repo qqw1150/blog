@@ -3,16 +3,22 @@
         <h1 class="title"><?php echo $article['title']?></h1>
         <div class="meta">
             <div class="item date"><?php echo $article['ctime']?></div>
-            <div class="item author"><span class="glyphicon glyphicon-user"></span>李四</div>
-            <div class="item watch"><span class="glyphicon glyphicon-eye-open"></span>2</div>
+            <div class="item author"><span class="glyphicon glyphicon-user"></span><?php echo $article['nickname']?></div>
+            <div class="item watch"><span class="glyphicon glyphicon-eye-open"></span><?php echo $article['look_num']?></div>
             <div class="item remark"><span class="glyphicon glyphicon-star-empty"></span><span class="val"><?php echo $article['star']?></span></div>
         </div>
-        <div class="tag">标签：<span class="glyphicon glyphicon-tags"></span><?php echo 'java、php、go'?></div>
+        <div class="tag">标签：<span class="glyphicon glyphicon-tags"></span>
+            <?php
+                foreach ($article['tags'] as $tag){
+                    echo '<a href="/blog/'.$tag['id'].'/list.html">'.$tag['name'].'</a>';
+                }
+            ?>
+        </div>
         <div class="content"><?php echo $article['content']?></div>
 
         <div class="options">
             <div class="item star">
-                <button onclick="star(<?php echo !empty($user) ? $user['id'] : 0?>,<?php echo $article['id']?>);" class="btn btn-primary" type="button"><span class="glyphicon glyphicon-thumbs-up"></span> 点赞</button>
+                <button onclick="star(<?php echo !empty($user) ? $user['id'] : 0?>,'<?php echo $article['encrypt_id']?>');" class="btn btn-primary" type="button"><span class="glyphicon glyphicon-thumbs-up"></span> 点赞</button>
                 <div class="tip"></div>
             </div>
 
@@ -24,9 +30,9 @@
 <div class="panel panel-default comment-box">
     <div class="panel-body">
         <div style="display: none" id="hiddenDom"></div>
-        <div class="title">相关评论(4)</div>
+        <div class="title">相关评论(<?php echo !empty($page) ? $page->getTotalItems() : 0?>)</div>
         <div class="form">
-            <form id="mFrom" class="form" action="/index/add-comment.html" method="post">
+            <form id="mFrom" class="form" action="/blog/add-comment.html" method="post">
                 <input type="hidden" name="form" value="comment"/>
                 <input type='hidden' id="token" name='<?php echo $this->security->getTokenKey() ?>' value='<?php echo $this->security->getToken() ?>'/>
                 <input type="hidden" id="articleId" name="articleId" value="<?php echo !empty($article) ? $article['id'] : '0' ?>"/>
@@ -59,6 +65,14 @@
                     </div>
                 <?php } ?>
             <?php } ?>
+        </div>
+
+        <div class="pager">
+            <a onclick="getComment(1,'<?php echo $article['encrypt_id']?>')" href="javascript:void(0);" href="" class="first item">首页</a>
+            <a onclick="getComment(<?php echo $page->getBefore()?>,'<?php echo $article['encrypt_id']?>')" href="javascript:void(0);" href="" class="prev item">上一页</a>
+            <div class="cur item"><?php echo $page->getCurrent()?>/<?php echo $page->getTotalPages()?></div>
+            <a onclick="getComment(<?php echo $page->getNext()?>,'<?php echo $article['encrypt_id']?>')" href="javascript:void(0);" href="" class="next item">下一页</a>
+            <a onclick="getComment(<?php echo $page->getTotalPages()?>,'<?php echo $article['encrypt_id']?>')" href="javascript:void(0);" href="" class="last item">尾页</a>
         </div>
     </div>
 </div>
@@ -117,7 +131,7 @@ $this->assets->addInlineJs('
         data[token.name]=token.value;
 
         $.ajax({
-            url:"/index/add-comment.html",
+            url:"/blog/add-comment.html",
             data:data,
             dataType:"JSON",
             type:"POST",
@@ -136,7 +150,7 @@ $this->assets->addInlineJs('
                     html+=comment.content;
                     html+="</div>"; 
                     html+=`<div class="reply"><span class="glyphicon glyphicon-share-alt"></span> <a href="javascript:void(0);" onclick="replyCemment(\"`+comment.nickname+`\");">回复</a></div>`;
-                     
+                    html+="</div></div>";
                     $("#comment-list").prepend(html);
                 }
             },
@@ -162,7 +176,7 @@ $this->assets->addInlineJs('
         }
     
         $.ajax({
-            url:"/index/star",
+            url:"/blog/star",
             type:"GET",
             data:{"userId":$userId,"articleId":$articleId},
             dataType:"JSON",
@@ -181,6 +195,41 @@ $this->assets->addInlineJs('
                 console.log("点赞失败",e.responseText);
             }
         })
+    }
+    
+    
+    function getComment($p,$articleId) {
+        $.ajax({
+            url:"/blog/getCommentsArticle",
+            type:"GET",
+            data:{"p":$p,"articleId":$articleId},
+            dataType:"JSON",
+            success:function (data) {
+                console.log(data);
+                if(data.error===0){
+                    var page = data.data.page;
+                    if(page.totalItems>0){
+                        var html="";
+                        for (let i = 0; i <page.items.length; i++) {
+                            let comment = page.items[i];
+                            html+="<div class=\"comment\">";
+                            html+=`<div class="left"><img src="`+comment.photo+`"/></div>`;
+                            html+="<div class=\"right\">";
+                            html+="<div class=\"c_title\">"+comment.nickname+"</div>";
+                            html+="<div class=\"c_content\">";
+                            html+=comment.content;
+                            html+="</div>";
+                            html+=`<div class="reply"><span class="glyphicon glyphicon-share-alt"></span> <a href="javascript:void(0);" onclick="replyCemment(\"`+comment.nickname+`\");">回复</a></div>`;
+                            html+="</div></div>";
+                        }
+                        $("#comment-list").html(html);
+                    }
+                }
+            },
+            error:function (e) {
+                console.log("获取失败",e.responseText);
+            }
+        });
     }
     
 ');

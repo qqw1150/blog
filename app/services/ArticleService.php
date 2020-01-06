@@ -100,7 +100,7 @@ class ArticleService extends BaseService
     {
         $index = $page->getIndex();
         $rows = $page->getPageSize();
-        $sql = "select id,title,content,user_id,ctime,status from article where user_id=? and del=0 and status={$status} order by id desc limit {$index},{$rows}";
+        $sql = "select id,title,content,user_id,ctime,status,look_num,comment_num from article where user_id=? and del=0 and status={$status} order by id desc limit {$index},{$rows}";
         $rs = $this->db->query($sql, [$userId]);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
         $articles = $rs->fetchAll();
@@ -127,27 +127,24 @@ class ArticleService extends BaseService
      */
     public function getOne($articleId, $lazy = false)
     {
-        $sql = "select a.id,a.title,a.content,a.user_id,a.ctime,a.status from article a left join user u on u.id=a.user_id where a.id=? and a.del=0";
+        $sql = "select a.id,a.title,a.content,a.user_id,a.ctime,a.status,a.look_num,a.comment_num,u.nickname from article a left join user u on u.id=a.user_id where a.id=? and a.del=0";
         $rs = $this->db->query($sql, [$articleId]);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
         $article = $rs->fetchArray();
 
-        $sql="select count(id) from star where article_id=?";
-        $rs=$this->db->query($sql, [$articleId]);
+        $sql = "select count(id) from star where article_id=?";
+        $rs = $this->db->query($sql, [$articleId]);
         $rs->setFetchMode(\PDO::FETCH_NUM);
-        $star=$rs->fetchArray();
-        $article['star']=$star[0];
+        $star = $rs->fetchArray();
+        $article['star'] = $star[0];
+        $article['encrypt_id'] = CryptUtil::num_encrypt($article['id']);
 
         if ($lazy === false && !empty($article)) {
-            $sql = "select t.name from article_tag art left join tag t on art.tag_id=t.id where art.article_id=? and art.del=0";
+            $sql = "select t.id,t.name from article_tag art left join tag t on art.tag_id=t.id where art.article_id=? and art.del=0";
             $rs = $this->db->query($sql, [$article['id']]);
             $rs->setFetchMode(\PDO::FETCH_ASSOC);
             $tags = $rs->fetchAll();
-            $tagNames = [];
-            foreach ($tags as $tag) {
-                $tagNames[] = $tag['name'];
-            }
-            $article['tags'] = $tagNames;
+            $article['tags'] = $tags;
         }
 
         return $article;
@@ -231,7 +228,7 @@ class ArticleService extends BaseService
     {
         $index = $page->getIndex();
         $rows = $page->getPageSize();
-        $sql = "select id,title,content,ctime,user_id,status from article where status=2 and del=0 order by id desc limit {$index},{$rows}";
+        $sql = "select id,title,content,ctime,user_id,status,look_num,comment_num from article where status=2 and del=0 order by id desc limit {$index},{$rows}";
         $rs = $this->db->query($sql);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
         $articles = $rs->fetchAll();
@@ -239,8 +236,8 @@ class ArticleService extends BaseService
             $article['encrypt_id'] = CryptUtil::num_encrypt($article['id']);
             $article['short_content'] = mb_strlen($article['content']) > 350 ? mb_substr($article['content'], 0, 350) : $article['content'];
             $article['short_content'] = (new \Phalcon\Filter())->sanitize($article['short_content'], 'striptags');
-            $articleIds[] = $article['id'];
         }
+
 
         $page->setItems($articles);
 
@@ -313,7 +310,7 @@ class ArticleService extends BaseService
         $index = $page->getIndex();
         $rows = $page->getPageSize();
         $sql = "select 
-a.id,a.title,a.content,a.ctime,a.user_id,a.status
+a.id,a.title,a.content,a.ctime,a.user_id,a.status,a.look_num,a.comment_num
  from article a left join article_tag art on a.id=art.article_id
 where art.tag_id=? and a.del=0 and a.status=2 order by a.id desc limit {$index},{$rows}";
         $rs = $this->db->query($sql, [$tagId]);
@@ -337,6 +334,13 @@ where art.tag_id=? and a.del=0 and a.status=2";
         return $page;
     }
 
+    /**
+     * 点赞
+     * @param $userId
+     * @param $articleId
+     * @return bool
+     * @throws \Exception
+     */
     public function star($userId, $articleId)
     {
         $sql = "select id from star where user_id=? and article_id=?";
@@ -348,11 +352,75 @@ where art.tag_id=? and a.del=0 and a.status=2";
 
         $sql = "insert into star(id,user_id,article_id) values (null,?,?)";
         $b = $this->db->execute($sql, [$userId, $articleId]);
-        if($b === false){
+        if ($b === false) {
             throw new \Exception('插入失败');
         }
 
         return true;
+    }
+
+    /**
+     * 搜索文章
+     * @param Page $page
+     * @param $keyword
+     * @return Page
+     */
+    public function search(Page $page, $keyword)
+    {
+        $index = $page->getIndex();
+        $rows = $page->getPageSize();
+        $sql = "select id,title,content,ctime,user_id,status from article where title like '%{$keyword}%' and status=2 and del=0 order by id desc limit {$index},{$rows}";
+        $rs = $this->db->query($sql);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $articles = $rs->fetchAll();
+        foreach ($articles as &$article) {
+            $article['encrypt_id'] = CryptUtil::num_encrypt($article['id']);
+            $article['short_content'] = mb_strlen($article['content']) > 350 ? mb_substr($article['content'], 0, 350) : $article['content'];
+            $article['short_content'] = (new \Phalcon\Filter())->sanitize($article['short_content'], 'striptags');
+            $articleIds[] = $article['id'];
+        }
+
+        $page->setItems($articles);
+
+
+        $sql = "select count(id) as total from article where title like '%{$keyword}%' and status=2 and del=0";
+        $rs = $this->db->query($sql);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $totalRes = $rs->fetchArray();
+        $page->setTotalItems($totalRes['total']);
+        return $page;
+    }
+
+    public function recordLookNum(int $articleId)
+    {
+        /**
+         * @var UserService $userService
+         */
+        $userService = $this->di->get('userService');
+        $user = $userService->getLoginedUser();
+        if ($user !== false) {
+            $sql = "select user_id from article where id=?";
+            $rs = $this->db->query($sql, [$articleId]);
+            $rs->setFetchMode(\PDO::FETCH_ASSOC);
+            $row = $rs->fetchArray();
+            $userId = $row['user_id'];
+
+            if (intval($userId) === intval($user['id'])) {
+                return false;
+            }
+        }
+
+        $ip = CryptUtil::getIp();
+        $ok = CryptUtil::checkIpRep($this->di->get('redis'), "blog_article_look_num_", $ip, 10, 1);
+
+        if ($ok) {
+            $sql = "update article set look_num = look_num + 1 where id=?";
+            $b = $this->db->execute($sql, [$articleId]);
+            return $b === false ? false : true;
+        }
+
+        return false;
+
     }
 
 }

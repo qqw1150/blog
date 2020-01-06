@@ -1,9 +1,10 @@
 <div class="tag-box panel panel-default">
+    <div class="panel-heading">文章标签</div>
     <div class="panel-body">
         <?php
         if(!empty($tags)){
             foreach ($tags as $tag){
-                echo "<a href='/index/{$tag["id"]}/list.html' class='tag'>".$tag['html']."</a>";
+                echo "<a href='/blog/{$tag["id"]}/list.html' class='tag'>".$tag['html']."</a>";
             }
         }
         ?>

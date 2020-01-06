@@ -1,0 +1,21 @@
+<?php if($this->userService->getLoginedUser()){?>
+    <ul class="list-group">
+        <li class="list-group-item"><a href="/user/list.html">我的文章</a></li>
+        <li class="list-group-item"><a href="/user/write.html">添加新文章</a></li>
+        <li class="list-group-item"><a href="/user/drag.html">草稿箱</a></li>
+    </ul>
+<?php }?>
+
+<div class="tag-box panel panel-default">
+    <div class="panel-heading">全部标签</div>
+    <div class="panel-body">
+        <?php
+        if(!empty($tags)){
+            foreach ($tags as $tag){
+                echo "<a href='/blog/{$tag["id"]}/list.html' class='tag'>".$tag['html']."</a>";
+            }
+        }
+        ?>
+    </div>
+</div>
+

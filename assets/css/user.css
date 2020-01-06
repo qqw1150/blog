@@ -409,3 +409,13 @@
 .articleList-box .panel .panel_body .item-orange {
     background-color: #d28b26
 }
+
+/******************* 主页标签栏 *********************/
+.tag-box .panel-body{
+    padding: 5px;
+}
+.tag-box .tag{
+    display: inline-block;
+    margin: 3px 3px;
+    text-decoration: none;
+}

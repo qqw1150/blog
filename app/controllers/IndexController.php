@@ -2,10 +2,7 @@
 
 namespace app\controllers;
 
-use app\libraries\CryptUtil;
 use app\libraries\Page;
-use app\models\domains\CommentForm;
-use Phalcon\Crypt\Mismatch;
 
 /**
  * Class IndexController
@@ -13,6 +10,13 @@ use Phalcon\Crypt\Mismatch;
  */
 class IndexController extends ControllerBase
 {
+    public function initialize()
+    {
+        parent::initialize();
+
+        $tags = $this->tagService->listAll();
+        $this->view->setVar('tags', $tags);
+    }
 
     public function indexAction()
     {
@@ -29,115 +33,43 @@ class IndexController extends ControllerBase
         $this->view->setVar('tags', $tags);
     }
 
-    /**
-     * @throws Mismatch
-     */
-    public function showArticleAction()
+    public function blogAction()
     {
-        $this->assets->addCss('assets/css/index.css' . $this->staticDebug());
-        $this->assets->addCss('assets/base/css/railscasts.min.css' . $this->staticDebug());
-        $this->assets->addJs('assets/js/index.js' . $this->staticDebug());
-        $this->assets->addJs('assets/plugs/ckeditor/plugins/codesnippet/lib/highlight/highlight.pack.js' . $this->staticDebug());
+        return $this->dispatcher->forward([
+            'controller' => 'blog',
+            'action' => 'index'
+        ]);
 
-        $articleId = CryptUtil::num_decrypt($this->dispatcher->getParam('articleId', 'string', ''));
-
-        if ($articleId !== "") {
-            $article = $this->articleService->getOne($articleId);
-            $this->view->setVar('article', $article);
-
-            $user = $this->userService->getLoginedUser();
-            $this->view->setVar('user', $user);
-
-            $page = new Page();
-            $page = $this->commentService->listOfArticle($page, $articleId);
-            $this->view->setVar('page', $page);
-        } else {
-            $this->flashSession->error("文章不存在");
-            $this->goBack();
-        }
     }
 
-    public function listByTagAction()
+    public function bookAction()
+    {
+        $this->dispatcher->forward([
+            'controller' => 'book',
+        ]);
+    }
+
+    public function toolAction()
+    {
+        $this->dispatcher->forward([
+            'controller' => 'tool',
+        ]);
+    }
+
+    public function searchAction()
     {
         //加载静态资源
         $this->assets->addCss('assets/css/index.css' . $this->staticDebug());
         $this->assets->addJs('assets/js/index.js' . $this->staticDebug());
 
-        $p = $this->dispatcher->getParam('p', 'int!', 1);
-        $tagId = $this->dispatcher->getParam('tagId', 'int!', 0);
-        if ($tagId !== 0) {
-            $page = new Page($p);
-            $page = $articles = $this->articleService->listByTag($tagId, $page);
-            $this->view->setVar('page', $page);
+        $p = $this->request->get('p', 'int!', 1);
+        $keyword = $this->request->get('keyword', 'trim', '');
 
-            $tags = $this->tagService->listAll();
-            $this->view->setVar('tags', $tags);
-
-            $curTag = $tags[0];
-            foreach ($tags as $tag) {
-                if (intval($tag['id']) === $tagId) {
-                    $curTag = $tag;
-                    break;
-                }
-            }
-            $this->view->setVar('curTag', $curTag);
-        } else {
-            $this->response->redirect('/');
-        }
+        $page = new Page($p);
+        $page = $this->articleService->search($page, $keyword);
+        $this->view->setVar('page', $page);
+        $this->view->setVar('keyword', $keyword);
     }
 
-    /**
-     * @param CommentForm $commentForm
-     */
-    public function writeCommentAction(CommentForm $commentForm)
-    {
-        if ($this->request->isPost()) {
-            if ($this->security->checkToken()) {
-                $data = [];
-                $data['user_id'] = $commentForm->getUserId();
-                $data['content'] = $commentForm->getContent();
-                $data['article_id'] = $commentForm->getArticleId();
-                $comment = $this->commentService->add($data);
-                $comment['content'] = preg_replace("/@(.*?):/iu", "<span class='ato'>@$1:</span>", $comment['content']);
-                if ($comment !== false) {
-                    return json_encode(['error' => 0, 'msg' => 'success', 'data' => [
-                        'token' => [
-                            'key' => $this->security->getTokenKey(),
-                            'value' => $this->security->getToken()
-                        ],
-                        'comment' => $comment
-                    ]]);
-                } else {
-                    return json_encode(['error' => 1, 'msg' => '添加失败']);
-                }
-            } else {
-                return json_encode(['error' => 1, 'msg' => '非法提交']);
-            }
-        } else {
-            return json_encode(['error' => 1, 'msg' => '非法提交']);
-        }
-    }
-
-    public function starAction()
-    {
-        if ($this->request->isGet()) {
-            $articleId = $this->request->get('articleId', 'int!', 0);
-            $userId = $this->request->get('userId', 'int!', 0);
-            if ($articleId !== 0 && $userId !== 0) {
-                try {
-                    $b = $this->articleService->star($userId, $articleId);
-                    if ($b !== false) {
-                        return json_encode(array('error' => 0, 'msg' => 'SUCCESS'));
-                    }else{
-                        return json_encode(array('error' => 1, 'msg' => '重复点赞'));
-                    }
-                } catch (\Exception $e) {
-                }
-
-            }
-        }
-
-        return json_encode(array('error' => 1, 'msg' => '点赞失败'));
-    }
 }
 

@@ -207,6 +207,7 @@
 .showArticle-box{
     background: #fdfdfd;
     padding: 20px;
+    font-size: 15px;
 }
 .showArticle-box .article{
 }
@@ -228,7 +229,8 @@
 
 }
 .showArticle-box .article .tag{
-    margin: 10px 0;
+    margin-top: 10px;
+    margin-bottom: 30px;
 }
 .showArticle-box .article .tag span{
     margin-right: 10px;
@@ -248,6 +250,36 @@
 /*}*/
 .showArticle-box .article .content{
     margin: 10px 0;
+}
+
+.comment-box .pager {
+    display: flex;
+    flex-direction: row;
+    width: 300px;
+    margin: 10px auto;
+    text-align: center;
+    font-size: 12px
+}
+
+.comment-box .pager .item {
+    height: 35px;
+    line-height: 35px;
+    border: 1px solid #b3b3b3;
+    width: 20%;
+    margin-right: 10px;
+    color: #414142;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 1px solid #e4e4e4;
+    background-color: #fdfdfd;
+}
+
+.comment-box .pager a.item:hover {
+    background-color: #eae4e4
+}
+
+.comment-box .pager .last {
+    margin-right: 0
 }
 
 

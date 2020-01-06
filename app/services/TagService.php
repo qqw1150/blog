@@ -248,9 +248,13 @@ class TagService extends BaseService
         $sql = "select distinct t.name,t.icon,t.id from `article_tag` art left join `tag` t on art.tag_id=t.id where art.article_id in (" . implode(',', array_fill(0, count($articleIds), '?')) . ")";
         $rs = $this->db->query($sql, $articleIds);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
-        $res = $rs->fetchAll();
-
-        return $res;
+        $tags = $rs->fetchAll();
+        if(!empty($tags)){
+            foreach ($tags as &$tag){
+                $tag['html']=$this->getTagHtmlV2($tag['name'],$tag['icon']);
+            }
+        }
+        return $tags;
     }
 
     public function getTagHtml($name, $icon)

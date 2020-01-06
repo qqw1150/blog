@@ -22,6 +22,14 @@ class UserController extends ControllerBase
         parent::initialize();
         //加载静态资源
         $this->assets->addCss('assets/css/user.css' . $this->staticDebug());
+
+        try {
+            $user = $this->userService->getLoginedUser();
+            $tags = $this->tagService->getUserTags($user['id']);
+            $this->view->setVar('tags', $tags);
+        } catch (Mismatch $e) {
+
+        }
     }
 
     /**
@@ -240,7 +248,7 @@ class UserController extends ControllerBase
 
     public function showArticleAction(){
         $this->dispatcher->forward([
-            'controller'=>'index',
+            'controller'=>'blog',
             'action'=>'showArticle',
         ]);
     }
