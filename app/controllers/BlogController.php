@@ -9,10 +9,12 @@
 namespace app\controllers;
 
 
+use app\libraries\CommonUtil;
 use app\libraries\CryptUtil;
 use app\libraries\Page;
 use app\models\domains\CommentForm;
 use Phalcon\Crypt\Mismatch;
+use Phalcon\Mvc\View;
 
 class BlogController extends ControllerBase
 {
@@ -58,7 +60,7 @@ class BlogController extends ControllerBase
             }
         }
 
-        return json_encode(array('error' => 1, 'msg' => '点赞失败')); 
+        return json_encode(array('error' => 1, 'msg' => '点赞失败'));
     }
 
     /**
@@ -115,6 +117,11 @@ class BlogController extends ControllerBase
                 }
             }
             $this->view->setVar('curTag', $curTag);
+
+            $controller = $this->dispatcher->getParam('controller');
+            if (!empty($controller)) {
+                $this->dispatcher->setControllerName($controller);
+            }
         } else {
             $this->response->redirect('/');
         }
@@ -164,6 +171,77 @@ class BlogController extends ControllerBase
             return json_encode(['error' => 0, 'msg' => 'SUCCESS', 'data' => ['page' => $page->toArray()]]);
         } else {
             return json_encode(['error' => 1, 'msg' => '评论不存在']);
+        }
+    }
+
+    public function manageImageAction(){
+        $this->view->setRenderLevel(
+            View::LEVEL_ACTION_VIEW
+        );
+    }
+
+    /**
+     * 图片上传
+     * @return false|string
+     */
+    public function uploadImageAction()
+    {
+        $name = $_FILES['upload']['name'];
+        $type = $_FILES['upload']['type'];
+        $tmp_name = $_FILES['upload']['tmp_name'];
+        $error = $_FILES['upload']['error'];
+        $size = $_FILES['upload']['size'];
+
+        $user = $this->userService->getLoginedUser();
+
+        $urlpath = STATIC_URL.'/upload/image/'.CryptUtil::num_encrypt($user['id']);
+        $dir = STATIC_PATH . '/upload/image/'.CryptUtil::num_encrypt($user['id']);
+        $typeArr = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+        $limitSize = 10 * MB;
+        $pathinfo = pathinfo($name);
+        $filename = date('YmdHis') . '_' . uniqid().'.'.$pathinfo['extension'];
+
+        if(!file_exists($dir)){
+            mkdir($dir,0775);
+        }
+
+        $errordData = [
+            "uploaded" => 1,
+            "fileName" => $name,
+            "url" => $urlpath . '/' . $name,
+        ];
+
+        if (intval($error) !== 0) {
+            $errordData['error'] = ['message' => '上传失败'];
+            return json_encode($errordData);
+        }
+
+        if (!in_array($type, $typeArr)) {
+            $errordData['error'] = ['message' => '上传文件格式错误，只支持:' . implode(',', $typeArr)];
+            return json_encode($errordData);
+        }
+
+        if ($size > $limitSize) {
+            $errordData['error'] = ['message' => '上传文件大小限制，最大支持:' . CommonUtil::getSizeFormat(intval($size))];
+            return json_encode($errordData);
+        }
+
+        if (move_uploaded_file($tmp_name, $dir . '/' . $filename)) {
+            if ($size > 600 * KB) {
+                try {
+                    CommonUtil::imageCompress($dir.'/' . $filename, 0.8);
+                } catch (\Exception $e) {
+                }
+            }
+
+            return json_encode([
+                "uploaded" => 1,
+                "fileName" => $filename,
+                "url" => $urlpath . '/' . $filename
+            ]);
+        } else {
+            $errordData['error'] = ['message' => '上传失败'];
+            return json_encode($errordData);
         }
     }
 

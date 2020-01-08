@@ -1,0 +1,89 @@
+
+<div class="panel panel-default">
+    <div class="panel-body cib">
+        <?php
+        if ($this->flashSession->has('error')) {
+            $messages = $this->flashSession->getMessages('error');
+            foreach ($messages as $message) {
+                echo '<div class="alert alert-danger alert-dismissible errors" role="alert">';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+                echo $message;
+                echo '</div>';
+            }
+        }else if($this->flashSession->has('success')){
+            $messages = $this->flashSession->getMessages('success');
+            foreach ($messages as $message) {
+                echo '<div class="alert alert-success alert-dismissible errors" role="alert">';
+                echo '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+                echo $message;
+                echo '</div>';
+            }
+        }
+        ?>
+
+        <form id="mForm" class="form-horizontal" action="/user/saveTag" method="post">
+            <input name="type" value="0" type="hidden"/>
+            <input name="old" value="" type="hidden"/>
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name="tagName" placeholder="标签名">
+                </div>
+                <div class="col-sm-2">
+                    <button onclick="submitForm(1)" type="button" class="btn btn-primary">添加</button>
+                    <button onclick="submitForm(2)" type="button" class="btn btn-success">修改</button>
+                </div>
+            </div>
+        </form>
+        <table class="table table-hover tags-box">
+            <tr>
+                <th></th>
+                <th>序号</th>
+                <th>标签名</th>
+            </tr>
+            <?php
+            /**
+             * @var \app\libraries\Page $page
+             */
+            if($page->getTotalItems()>0){
+                foreach ($page->getItems() as $key=>$item){
+                    echo "<tr>";
+                    echo "<td class='col-md-2'><input type='radio' name='tagck' class='tagck' value='{$item['id']}' ></td>";
+                    echo "<td class='col-md-3'>".($key+1+$page->getIndex())."</td>";
+                    echo "<td>{$item['name']}</td>";
+                    echo "</tr>";
+                }
+            }
+
+            ?>
+        </table>
+
+        <div class="pager">
+            <a href="/user/tags.html" class="first item">首页</a>
+            <a href="/user/tags-<?php echo $page->getBefore()?>.html" class="prev item">上一页</a>
+            <div class="cur item"><?php echo $page->getCurrent()?>/<?php echo $page->getTotalPages()?></div>
+            <a href="/user/tags-<?php echo $page->getNext()?>.html" class="next item">下一页</a>
+            <a href="/user/tags-<?php echo $page->getTotalPages()?>.html" class="last item">尾页</a>
+        </div>
+    </div>
+</div>
+
+<?php
+$this->assets->addInlineJs(<<<STR
+$(function () {
+        $(".tags-box .tagck").click(function () {
+            var old = $(this).parent().next().next().text();
+            $("#mForm input[name=tagName]").val(old);
+            $("#mForm input[name=old]").val(old);
+        });
+});
+
+function submitForm(type){
+    $("#mForm input[name=type]").val(type);
+    $("#mForm").submit();
+}
+STR
+);
+?>
+<script>
+
+</script>

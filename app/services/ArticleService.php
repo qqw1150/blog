@@ -85,6 +85,13 @@ class ArticleService extends BaseService
             return false;
         }
 
+        $b = $tagService->addUserTags($tagNames, $user['id']);
+
+        if ($b === false) {
+            $this->db->rollback();
+            return false;
+        }
+
         $this->db->commit();
 
         return true;

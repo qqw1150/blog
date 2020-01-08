@@ -22,7 +22,7 @@
             <label for="content" class="col-md-1 control-label">标签</label>
             <div class="col-md-9">
                 <input id="tags" name="tags"
-                       value="<?php echo !empty($article) && !empty($article['tags']) ? implode(',', $article['tags']) : '' ?>"
+                       value="<?php echo !empty($article) ? $article['tagsStr'] : ''?>"
                        placeholder="标签" class="form-control"/>
             </div>
             <div class="col-md-2">
@@ -126,6 +126,10 @@ $this->assets->addInlineJs('
 CKEDITOR.replace("content", {
 height: 600,
 removePlugins:"cloudservices,easyimage",
+extraPlugins : "uploadimage",
+filebrowserImageUploadUrl:"/blog/uploadImage",
+filebrowserImageBrowseUrl: "/blog/manageImage",
+removeDialogTabs: "image:advanced;link:advanced",
 });
 CKEDITOR.editorConfig = function (config) {
     config.removePlugins = "easyimage,cloudservices";

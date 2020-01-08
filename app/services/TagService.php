@@ -8,7 +8,9 @@
 
 namespace app\services;
 
+use app\libraries\Page;
 use app\models\Tag;
+use Phalcon\Session\Adapter\Files;
 
 class TagService extends BaseService
 {
@@ -132,6 +134,48 @@ class TagService extends BaseService
 
     }
 
+    public function add(string $tagName)
+    {
+        $sql = "select id from tag where name=?";
+        $rs = $this->db->query($sql, [$tagName]);
+        $num = $rs->numRows();
+
+        if ($num === 0) {
+            $this->db->begin();
+
+            $sql = "insert into tag values (null,'{$tagName}'," . mt_rand(0, 5) . ")";
+            $b = $this->db->execute($sql);
+            if ($b === false) {
+                $this->db->rollback();
+                return false;
+            }
+
+            /**
+             * @var UserService $userService
+             * @var Files $session
+             */
+            $tagId = $this->db->lastInsertId();
+            $userService = $this->di->get('userService');
+            $user = $userService->getLoginedUser();
+
+            $sql = "insert into user_tag values (null,{$user['id']},{$tagId})";
+            $b = $this->db->execute($sql);
+            if ($b === false) {
+                $this->db->rollback();
+                return false;
+            }
+
+            $this->db->commit();
+        }
+        return true;
+    }
+
+    public function update(string $newName, string $oldName)
+    {
+        $sql = "update tag set name = ? where name=?";
+        return $this->db->execute($sql, [$newName, $oldName]);
+    }
+
     /**
      * 修改文章tag
      * @param $tagNames
@@ -233,30 +277,29 @@ class TagService extends BaseService
      */
     public function getUserTags($userId)
     {
-        $sql = "select `id` from `article` where user_id=?";
+
+        $sql = "select t.id,t.name,t.icon from user_tag ut left join tag t on ut.tag_id=t.id where ut.user_id=?";
         $rs = $this->db->query($sql, [$userId]);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
-        $res = $rs->fetchAll();
-        foreach ($res as $val) {
-            $articleIds[] = $val['id'];
-        }
-
-        if (count($articleIds) === 0) {
-            return false;
-        }
-
-        $sql = "select distinct t.name,t.icon,t.id from `article_tag` art left join `tag` t on art.tag_id=t.id where art.article_id in (" . implode(',', array_fill(0, count($articleIds), '?')) . ")";
-        $rs = $this->db->query($sql, $articleIds);
-        $rs->setFetchMode(\PDO::FETCH_ASSOC);
         $tags = $rs->fetchAll();
-        if(!empty($tags)){
-            foreach ($tags as &$tag){
-                $tag['html']=$this->getTagHtmlV2($tag['name'],$tag['icon']);
+        if (!empty($tags)) {
+            foreach ($tags as &$tag) {
+                $tag['html'] = $this->getTagHtmlV2($tag['name'], $tag['icon']);
             }
         }
         return $tags;
     }
 
+    /**
+     * { name: "clipboard", items: [ "Cut", "Copy", "Paste", "PasteText", "-", "Undo", "Redo" ] },
+    { name: "basicstyles", items: [ "Bold", "Italic", "Underline", "Strike", "Subscript", "Superscript", "-", "CopyFormatting", "RemoveFormat" ] },
+    { name: "paragraph", items: [ "NumberedList", "BulletedList", "-", "Outdent", "Indent", "-", "Blockquote","-", "JustifyLeft", "JustifyCenter", "JustifyRight", "JustifyBlock" ] },
+    { name: "links", items: [ "Link", "Unlink" ] },
+    { name: "insert", items: [ "Image", "CodeSnippet", "Table", "HorizontalRule", "Smiley", "SpecialChar", "EmojiPanel" ] },
+    { name: "styles", items: [ "Styles", "Format", "Font", "FontSize" ] },
+    { name: "colors", items: [ "TextColor", "BGColor" ] },
+    { name: "tools", items: [ "Maximize"] },
+     */
     public function getTagHtml($name, $icon)
     {
         switch ($icon) {
@@ -305,7 +348,7 @@ class TagService extends BaseService
                 $type = 'default';
         }
 
-        $html = '<span class="label label-'.$type.'">'.$name.'</span>';
+        $html = '<span class="label label-' . $type . '">' . $name . '</span>';
         return $html;
     }
 
@@ -315,11 +358,72 @@ class TagService extends BaseService
         $rs = $this->db->query($sql);
         $rs->setFetchMode(\PDO::FETCH_ASSOC);
         $tags = $rs->fetchAll();
-        if(!empty($tags)){
-            foreach ($tags as &$tag){
-                $tag['html']=$this->getTagHtmlV2($tag['name'],$tag['icon']);
+        if (!empty($tags)) {
+            foreach ($tags as &$tag) {
+                $tag['html'] = $this->getTagHtmlV2($tag['name'], $tag['icon']);
             }
         }
         return $tags;
+    }
+
+    public function listAllPage(Page $page)
+    {
+        $index = $page->getIndex();
+        $rows = $page->getPageSize();
+        $sql = "select id,name from tag order by id desc limit {$index},{$rows}";
+        $rs = $this->db->query($sql);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $tags = $rs->fetchAll();
+
+        $page->setItems($tags);
+
+        $sql = "select count(id) as total from tag";
+        $rs = $this->db->query($sql);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $totalRes = $rs->fetchArray();
+        $page->setTotalItems($totalRes['total']);
+        return $page;
+    }
+
+    /**
+     * 添加用户标签
+     * @param array $tagNames
+     * @param int $userId
+     * @return bool
+     */
+    public function addUserTags(array $tagNames, int $userId)
+    {
+        $tags = $this->addTags($tagNames);
+
+        $srcIds = [];
+        foreach ($tags as $tag) {
+            $srcIds[] = $tag['id'];
+        }
+
+        $sql = "select tag_id from user_tag where user_id=?";
+        $rs = $this->db->query($sql, [$userId]);
+        $rs->setFetchMode(\PDO::FETCH_ASSOC);
+        $utags = $rs->fetchAll();
+
+        $distIds = [];
+        foreach ($utags as $tag) {
+            $distIds[] = $tag['tag_id'];
+        }
+
+        $arr = array_values(array_diff($srcIds, $distIds));
+
+        if (!empty($arr)) {
+            $val = "";
+            foreach ($arr as $key => $tid) {
+                if ($key > 0) {
+                    $val .= ",";
+                }
+                $val .= "(null,{$userId},{$tid})";
+            }
+            $sql = "insert into user_tag(id,user_id,tag_id) values {$val}";
+            return $this->db->execute($sql);
+        }
+
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-body, a, ul, a:hover {
+body, a, ul{
     margin: 0;
     padding: 0;
     list-style: none;
@@ -10,10 +10,10 @@ a {
     color: #4183c4
 }
 
-a:hover {
-    text-decoration: none;
-    color: #0676e4
-}
+/*a:hover {*/
+    /*text-decoration: none;*/
+    /*color: #0676e4*/
+/*}*/
 
 button {
     border: none

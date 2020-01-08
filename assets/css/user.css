@@ -419,3 +419,35 @@
     margin: 3px 3px;
     text-decoration: none;
 }
+
+
+/************ 分页 *******************/
+.pager {
+    display: flex;
+    flex-direction: row;
+    width: 300px;
+    margin: 10px auto;
+    text-align: center;
+    font-size: 12px
+}
+
+.pager .item {
+    height: 35px;
+    line-height: 35px;
+    border: 1px solid #b3b3b3;
+    width: 20%;
+    margin-right: 10px;
+    color: #414142;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 1px solid #e4e4e4;
+    background-color: #fdfdfd;
+}
+
+.pager a.item:hover {
+    background-color: #eae4e4
+}
+
+.pager .last {
+    margin-right: 0
+}

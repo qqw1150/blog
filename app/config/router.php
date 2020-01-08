@@ -35,6 +35,8 @@ $user = new \Phalcon\Mvc\Router\Group(['controller' => 'user']);
 $user->setPrefix('/user');
 $user->add('/list.html', ['action' => 'articleList'], ['GET']);
 $user->add('/list-([0-9]+).html', ['action' => 'articleList', 'p' => 1], ['GET']);
+$user->add('/([0-9]+)/list.html', ['action' => 'listByTag', 'tagId' => 1], ['GET']);
+$user->add('/([0-9]+)/list-([0-9]+).html', ['action' => 'listByTag', 'tagId' => 1, 'p' => 2], ['GET']);
 $user->add('/drag.html', ['action' => 'articleList', 'p' => 1, 'drag' => true], ['GET']);
 $user->add('/drag-([0-9]+).html', ['action' => 'articleList', 'p' => 1, 'drag' => true], ['GET']);
 $user->add('/write.html', ['action' => 'toWrite'], ['GET']);
@@ -47,6 +49,8 @@ $user->add('/del-([0-9]+).html', ['action' => 'deleteArticle', 'articleId' => 1]
 $user->add('/del-([0-9]+)-([0-9]+).html', ['action' => 'deleteArticle', 'articleId' => 1, 'p' => 2], ['GET']);
 $user->add('/public-([0-9]+)-([0-9]+).html', ['action' => 'publicArticle', 'articleId' => 1, 'p' => 2], ['GET']);
 $user->add('/article-(.*?).html', ['action' => 'showArticle', 'articleId' => 1], ['GET']);
+$user->add('/tags.html', ['action' => 'tagList'], ['GET']);
+$user->add('/tags-([0-9]+).html', ['action' => 'tagList', 'p' => 1], ['GET']);
 $router->mount($user);
 
 

@@ -125,7 +125,7 @@ class UserController extends ControllerBase
         $validation = new RegisterValidation();
         $messages = $validation->validate($registerForm->toArray());
         if (count($messages)) {
-            foreach ($messages as $message){
+            foreach ($messages as $message) {
                 $this->flashSession->error($message->getMessage());
                 return $this->response->redirect('/user/register.html');
             }
@@ -142,7 +142,7 @@ class UserController extends ControllerBase
 
     public function logoutAction()
     {
-        $this->di->get('userService')->logout();
+        $this->userService->logout();
         return $this->response->redirect('index/index');
     }
 
@@ -156,6 +156,14 @@ class UserController extends ControllerBase
         $p = $this->dispatcher->getParam('p', 'int!', 1);
         if ($articleId !== 0) {
             $article = $this->articleService->getOne($articleId);
+            $tagsStr = "";
+            foreach ($article['tags'] as $key => $tag) {
+                if ($key > 0) {
+                    $tagsStr .= ",";
+                }
+                $tagsStr .= $tag['name'];
+            }
+            $article['tagsStr'] = $tagsStr;
             $this->view->setVar('article', $article);
             $this->view->setVar('p', $p);
         }
@@ -176,9 +184,9 @@ class UserController extends ControllerBase
             $this->response->redirect('/user/login.html');
         }
 
-        if($drag){
-            $page = $this->articleService->listOfUser($page, $user['id'],1);
-        }else{
+        if ($drag) {
+            $page = $this->articleService->listOfUser($page, $user['id'], 1);
+        } else {
             $page = $this->articleService->listOfUser($page, $user['id']);
         }
 
@@ -200,11 +208,11 @@ class UserController extends ControllerBase
 
         if ($this->request->isPost()) {
             if ($this->security->checkToken()) {
-                $p=$this->request->getPost('p','int!',1);
+                $p = $this->request->getPost('p', 'int!', 1);
                 $articleService = $this->di->get('articleService');
                 $b = $articleService->save($writeArticleForm);
                 if ($b === true) {
-                    return $this->response->redirect('/user/list-'.$p.'.html');
+                    return $this->response->redirect('/user/list-' . $p . '.html');
                 } else {
                     $this->flashSession->error("提交失败");
                 }
@@ -218,38 +226,90 @@ class UserController extends ControllerBase
         return $this->response->redirect('/user.html');
     }
 
-    public function deleteArticleAction(){
-        $articleId=$this->dispatcher->getParam('articleId', 'int!', 0);
-        $p=$this->dispatcher->getParam('p', 'int!', 1);
+    public function deleteArticleAction()
+    {
+        $articleId = $this->dispatcher->getParam('articleId', 'int!', 0);
+        $p = $this->dispatcher->getParam('p', 'int!', 1);
 
-        if($articleId!==0){
+        if ($articleId !== 0) {
             $b = $this->articleService->delteSoft($articleId);
-            if($b===false){
+            if ($b === false) {
                 $this->flashSession->error("删除失败");
             }
 
-            $this->response->redirect('/user/list-'.$p.'.html');
+            $this->response->redirect('/user/list-' . $p . '.html');
         }
     }
 
-    public function publicArticleAction(){
-        $articleId=$this->dispatcher->getParam('articleId', 'int!', 0);
-        $p=$this->dispatcher->getParam('p', 'int!', 1);
+    public function publicArticleAction()
+    {
+        $articleId = $this->dispatcher->getParam('articleId', 'int!', 0);
+        $p = $this->dispatcher->getParam('p', 'int!', 1);
 
-        if($articleId!==0){
+        if ($articleId !== 0) {
             $b = $this->articleService->pub($articleId);
-            if($b===false){
+            if ($b === false) {
                 $this->flashSession->error("发布失败");
             }
 
-            $this->response->redirect('/user/drag-'.$p.'.html');
+            $this->response->redirect('/user/drag-' . $p . '.html');
         }
     }
 
-    public function showArticleAction(){
+    public function showArticleAction()
+    {
         $this->dispatcher->forward([
+            'controller' => 'blog',
+            'action' => 'showArticle',
+        ]);
+    }
+
+    public function tagListAction()
+    {
+        $p = $this->dispatcher->getParam('p', 'int!', 1);
+        $page = new Page($p);
+        $page->setPageSize(10);
+        $page = $this->tagService->listAllPage($page);
+        $this->view->setVar('page', $page);
+    }
+
+    public function saveTagAction()
+    {
+        $tagName = $this->request->getPost('tagName', 'trim', '');
+        $oldName = $this->request->getPost('old', 'trim', '');
+        $type = $this->request->getPost('type', 'int!', 0);
+        $p = $this->dispatcher->getParam('p', 'int!', 1);
+        if ($type !== 0 && $tagName !== "") {
+            switch ($type) {
+                case 1:
+                    $b = $this->tagService->add($tagName);
+                    if ($b === false) {
+                        $this->flashSession->error("添加失败");
+                    }else{
+                        $this->flashSession->success("添加成功");
+                    }
+                    break;
+                case 2:
+                    $b = $this->tagService->update($tagName, $oldName);
+                    if ($b === false) {
+                        $this->flashSession->error("修改失败");
+                    }else{
+                        $this->flashSession->success("修改成功");
+                    }
+                    break;
+            }
+        } else {
+            $this->flashSession->error("操作失败");
+        }
+
+        $this->response->redirect('/user/tags-' . $p . '.html');
+    }
+
+    public function listByTagAction(){
+        $this->dispatcher->setParam('controller','user');
+        return $this->dispatcher->forward([
             'controller'=>'blog',
-            'action'=>'showArticle',
+            'action'=>'listByTag',
         ]);
     }
 }
