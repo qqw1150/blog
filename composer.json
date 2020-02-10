@@ -1,0 +1,11 @@
+{
+  "require": {
+    "sunra/php-simple-html-dom-parser": "^1.5",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-redis": "*",
+    "ext-mbstring": "*",
+    "ext-curl": "*",
+    "ext-gd": "*"
+  }
+}
